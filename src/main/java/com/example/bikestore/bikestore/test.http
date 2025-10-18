@@ -1,0 +1,57 @@
+### Create a new product
+POST http://localhost:8080/api/products
+Content-Type: application/json
+
+
+  {
+    "name": "Xe đạp điện Gogo City",
+    "category": "Xe đạp điện 02",
+    "brand": "Gogo",
+    "price": 15000000,
+    "description": "Thiết kế đô thị, tiện lợi di chuyển",
+    "imageUrl": "https://example.com/gogo-city.jpg",
+    "stock": 12
+  }
+
+
+### Get all products
+GET http://localhost:8080/api/products
+Accept: application/json
+
+### Create a new user
+POST http://localhost:8080/api/users
+Content-Type: application/json
+  {
+    "name": "Trần Thị Trang",
+    "email": "trang.tran@example.com",
+    "phone": "0991234567",
+    "address": "37 Phan Chu Trinh, Đà Nẵng",
+    "password": "trang123"
+  }
+
+
+
+### Get all users
+GET http://localhost:8080/api/users
+Accept: application/json
+
+### Create a new transaction
+POST http://localhost:8080/api/transactions
+Content-Type: application/json
+
+  {
+    "customerId": "68ccf4afa45b48fa7faf7310",
+    "products": [
+      { "productId": "68ccf4afa45b48fa7faf7415", "quantity": 2 },
+      { "productId": "68ccf4afa45b48fa7faf7416", "quantity": 2 }
+    ],
+    "totalAmount": 60000000,
+    "status": "completed",
+    "createdAt": "2025-09-23T10:50:00Z"
+  }
+
+
+
+### Get all transactions
+GET http://localhost:8080/api/transactions
+Accept: application/json

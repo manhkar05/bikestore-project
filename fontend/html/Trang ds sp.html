@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh Sách Xe Đạp Điện</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+
+<body>
+    <!-- Vùng hiển thị sản phẩm sẽ nằm trong section bên dưới -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="Trang Chủ.html"><img src="../img/Logo_xe_đạp_điện_có_tên_Lâm_và_Mạnh-removebg-preview.png" alt="" width="100px" height="50px"></a>
+                <div style="display: flex;">
+                    <input type="search" class="form-control" placeholder="Tìm kiếm xe...">
+                    <button class="ms-3 btn btn-primary">Search</button>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="Trang Chủ.html">Trang Chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Trang ds sp.html">Cửa Hàng</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Danh
+                                Mục</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Xe Đô Thị</a></li>
+                                <li><a class="dropdown-item" href="#">Xe Phiêu Lưu</a></li>
+                                <li><a class="dropdown-item" href="#">Xe Giá Rẻ</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="Trang chính sách.html">Chính Sách</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Trang giỏ hàng.html"><i class="bi bi-cart"></i>
+                                <span id="cart-count">0</span></a></li>
+                        <li class="nav-item dropdown" id="user-dropdown" style="display: none;">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-fill"></i> <span id="user-name">Tên tài khoản</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="Trang thông tin cá nhân.html"><i
+                                            class="bi bi-person"></i> Thông tin cá nhân</a></li>
+                                <li>
+                                    <li><a class="dropdown-item" href="Trang liên hệ.html"><i
+                                            class="bi bi-person"></i>Liên hệ / Hỗ trợ</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="#" id="logout-btn"><i
+                                            class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                            </ul>
+                            </li>
+                            <li class="nav-item" id="login-link">
+                                <a class="nav-link" href="Trang đăng nhập.html"><i class="bi bi-person-fill"></i> Đăng
+                                nhập</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <section class="product-list py-5 mt-5">
+        <div class="container">
+            <h1 class="mb-4">Danh Sách Sản Phẩm</h1>
+            <!-- Bộ lọc sản phẩm -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-2">
+                    <select id="category-filter" class="form-select">
+            <option value="all">Tất cả phân loại</option>
+            <option value="Xe Đô Thị">Xe Đô Thị</option>
+            <option value="Xe Phiêu Lưu">Xe Phiêu Lưu</option>
+            <option value="Xe Giá Rẻ">Xe Giá Rẻ</option>
+            <option value="Xe Thể Thao">Xe Thể Thao</option>
+
+        </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <select id="brand-filter" class="form-select">
+            <option value="all">Tất cả hãng</option>
+            <option value="Yadea">Yadea</option>
+            <option value="VinFast">VinFast</option>
+            <option value="Honda">Honda</option>
+            <option value="Giant">Giant</option>
+
+        </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <select id="price-filter" class="form-select">
+            <option value="all">Tất cả giá</option>
+            <option value="0-5000000">Dưới 5 triệu</option>
+            <option value="5000000-10000000">5 - 10 triệu</option>
+            <option value="10000000-20000000">10 - 20 triệu</option>
+            <option value="20000000-100000000">Trên 20 triệu</option>
+        </select>
+                </div>
+            </div>
+            <div class="row" id="product-list"></div>
+        </div>
+    </section>
+    <footer style="background-color:grey; color:white; padding: 40px 20px;">
+        <div style="max-width: 1200px; margin: auto;">
+            <h2>Lâm và Mạnh – Xe đạp điện</h2>
+            <p>📧 Email: <a href="mailto:xedapdien@gmai.com" style="color:white;">xedapdien@gmai.com</a></p>
+            <p>📞 Điện thoại: <a href="tel:0123456789" style="color:white;">0123456789</a></p>
+            <p>📍 Địa chỉ: IUH</p>
+
+            <div style="margin-top: 20px;">
+                <a href="#" style="margin-right: 15px; color:white;"><img src="../img/face.png" alt="" width="50px" height="50px">Facebook</a>
+                <a href="#" style="margin-right: 15px; color:white;"><img src="../img/ig.png" alt="" width="80px" height="50px">Instagram</a>
+            </div>
+
+            <p style="margin-top: 30px;">© 2025 Lâm và Mạnh. Bảo lưu mọi quyền.</p>
+        </div>
+    </footer>
+    <button class="back-to-top" onclick="window.scrollTo(0, 0)">Lên đầu trang</button>
+    <script src="../js/api.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Hiển thị sản phẩm dạng lưới, ưu tiên lấy từ backend
+        let products = [];
+        const productList = document.getElementById("product-list");
+
+        function renderProducts(filteredProducts) {
+            productList.innerHTML = "";
+            if (filteredProducts.length === 0) {
+                productList.innerHTML = '<div class="col-12 text-center"><p class="text-muted">Không tìm thấy sản phẩm nào.</p></div>';
+                return;
+            }
+
+            filteredProducts.forEach(product => {
+                const productDiv = document.createElement("div");
+                productDiv.className = "col-md-4 mb-4";
+                productDiv.innerHTML = `
+                <div class="card h-100 shadow-sm">
+                    <img src="${product.imageUrl || '../img/1.jpg'}" class="card-img-top" alt="${product.name}" style="height:200px;object-fit:cover;">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">${product.name}</h5>
+                        <p class="card-text text-muted small">${product.description || 'Xe đạp điện chất lượng cao'}</p>
+                        <p class="card-text fw-bold text-danger mt-auto">${Utils.formatPrice(product.price || 0)}</p>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-primary flex-fill" onclick="viewProduct('${product.id}')">Xem chi tiết</button>
+                            <button class="btn btn-success" onclick="addToCart('${product.id}')" title="Thêm vào giỏ hàng">
+                                <i class="bi bi-cart-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+                productList.appendChild(productDiv);
+            });
+        }
+
+        // Tìm kiếm sản phẩm
+        document.querySelector(".btn-primary").addEventListener("click", async function() {
+            const searchTerm = document.querySelector("input[type='search']").value.trim();
+            if (!searchTerm) {
+                renderProducts(products);
+                return;
+            }
+
+            try {
+                Utils.showLoading(productList);
+                const searchResults = await ApiService.searchProducts(searchTerm);
+                renderProducts(searchResults);
+            } catch (error) {
+                console.error('Lỗi tìm kiếm:', error);
+                Utils.showNotification('Lỗi khi tìm kiếm sản phẩm', 'error');
+                // Fallback to local search
+                const filtered = products.filter(p => p.name.toLowerCase().includes(searchTerm.toLowerCase()));
+                renderProducts(filtered);
+            }
+        });
+
+        // Lấy sản phẩm từ backend
+        async function loadProducts() {
+            try {
+                Utils.showLoading(productList);
+                // Support optional search query from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const search = urlParams.get('search');
+                if (search) {
+                    products = await ApiService.searchProducts(search);
+                } else {
+                    products = await ApiService.getProducts();
+                }
+                renderProducts(products);
+                Utils.showNotification(`Đã tải ${products.length} sản phẩm`, 'success');
+            } catch (error) {
+                console.error('Lỗi khi lấy sản phẩm từ backend:', error);
+                Utils.showNotification('Không thể kết nối đến server.', 'error');
+                renderProducts([]);
+            }
+        }
+
+        // Xem chi tiết sản phẩm
+        function viewProduct(productId) {
+            window.location.href = `Trang chi tiết.html?id=${productId}`;
+        }
+
+        // Thêm vào giỏ hàng
+        async function addToCart(productId) {
+            try {
+                const product = products.find(p => p.id === productId);
+                if (!product) {
+                    Utils.showNotification('Sản phẩm không tồn tại', 'error');
+                    return;
+                }
+
+                const cartObj = await ApiService.getCartServer();
+                let cart = (cartObj && cartObj.items) ? cartObj.items : [];
+                const existingItem = cart.find(item => item.id === productId);
+
+                if (existingItem) {
+                    existingItem.quantity += 1;
+                } else {
+                    cart.push({
+                        id: product.id,
+                        name: product.name,
+                        price: product.price,
+                        image: product.imageUrl,
+                        quantity: 1
+                    });
+                }
+
+                await ApiService.saveCartServer({
+                    userId: ApiService.getCurrentUserId() || ApiService.getGuestId(),
+                    items: cart
+                });
+                await updateCartCount();
+                Utils.showNotification('Đã thêm vào giỏ hàng', 'success');
+            } catch (error) {
+                console.error('Lỗi khi thêm vào giỏ hàng:', error);
+                Utils.showNotification('Lỗi khi thêm vào giỏ hàng', 'error');
+            }
+        }
+
+        // Cập nhật số lượng giỏ hàng (server-backed)
+        async function updateCartCount() {
+            try {
+                const cartObj = await ApiService.getCartServer();
+                const items = (cartObj && cartObj.items) ? cartObj.items : [];
+                const cartCount = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+                document.getElementById("cart-count").innerText = cartCount;
+            } catch (e) {
+                console.error('Could not update cart count:', e);
+            }
+        }
+
+        // Lọc theo danh mục
+        function filterByCategory(category) {
+            if (category === 'all') {
+                renderProducts(products);
+            } else {
+                const filtered = products.filter(p => p.category === category);
+                renderProducts(filtered);
+            }
+        }
+
+        // Lọc theo thương hiệu
+        function filterByBrand(brand) {
+            if (brand === 'all') {
+                renderProducts(products);
+            } else {
+                const filtered = products.filter(p => p.brand === brand);
+                renderProducts(filtered);
+            }
+        }
+
+        // Lọc theo khoảng giá
+        function filterByPrice(minPrice, maxPrice) {
+            const filtered = products.filter(p => p.price >= minPrice && p.price <= maxPrice);
+            renderProducts(filtered);
+        }
+
+        window.onload = async function() {
+            // Giỏ hàng
+            await updateCartCount();
+
+            // Xin chào user (use cookie)
+            const loggedInUser = ApiService.getCookie('loggedInUser');
+            if (loggedInUser) {
+                const personLink = document.querySelector(".nav-link[href='Trang đăng nhập.html']");
+                if (personLink) {
+                    personLink.innerHTML = `Xin chào, ${loggedInUser}`;
+                    personLink.href = "#";
+                    personLink.addEventListener("click", function() {
+                        ApiService.setCookie('loggedInUser', '', -1);
+                        ApiService.setCookie('currentUser', '', -1);
+                        ApiService.setCookie('currentUserId', '', -1);
+                        window.location.href = "Trang đăng nhập.html";
+                    });
+                }
+            }
+
+            // Load sản phẩm
+            loadProducts();
+        };
+        // ...existing code...
+
+        // Lọc sản phẩm tổng hợp
+        function applyFilters() {
+            let filtered = [...products];
+
+            // Lọc theo phân loại
+            const category = document.getElementById("category-filter").value;
+            if (category !== "all") {
+                filtered = filtered.filter(p => (p.category || '').toLowerCase() === category.toLowerCase());
+            }
+
+            // Lọc theo hãng
+            const brand = document.getElementById("brand-filter").value;
+            if (brand !== "all") {
+                filtered = filtered.filter(p => (p.brand || '').toLowerCase() === brand.toLowerCase());
+            }
+
+            // Lọc theo giá
+            const priceValue = document.getElementById("price-filter").value;
+            if (priceValue !== "all") {
+                const [min, max] = priceValue.split('-').map(Number);
+                filtered = filtered.filter(p => (p.price || 0) >= min && (p.price || 0) <= max);
+            }
+
+            renderProducts(filtered);
+        }
+
+        // Gắn sự kiện cho các bộ lọc
+        document.addEventListener("DOMContentLoaded", function() {
+            document.getElementById("category-filter").addEventListener("change", applyFilters);
+            document.getElementById("brand-filter").addEventListener("change", applyFilters);
+            document.getElementById("price-filter").addEventListener("change", applyFilters);
+        });
+
+        // ...existing code...
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Lâm và Mạnh Xe Đạp Điện</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.8);
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin: 4px 12px;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            transform: translateX(5px);
+        }
+        .sidebar .nav-link i {
+            width: 20px;
+            margin-right: 10px;
+        }
+        .main-content {
+            background-color: #f8f9fa;
+            min-height: 100vh;
+        }
+        .dashboard-header {
+            background: white;
+            padding: 20px 30px;
+            border-bottom: 1px solid #e9ecef;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .dashboard-content {
+            padding: 30px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            border-left: 4px solid;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card.primary { border-left-color: #007bff; }
+        .stat-card.success { border-left-color: #28a745; }
+        .stat-card.warning { border-left-color: #ffc107; }
+        .stat-card.danger { border-left-color: #dc3545; }
+        .stat-card.info { border-left-color: #17a2b8; }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+        }
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .table th {
+            border-top: none;
+            font-weight: 600;
+            color: #495057;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.5px;
+        }
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-shipped { background: #cce5ff; color: #004085; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+        .btn-admin {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .btn-admin:hover {
+            transform: translateY(-2px);
+        }
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 50px;
+        }
+        .admin-only {
+            display: none;
+        }
+        .admin-only.show {
+            display: block;
+        }
+        .section {
+            display: none !important;
+        }
+        .section.active {
+            display: block !important;
+        }
+</style>
+</head>
+<body>
+    <!-- Admin Access Check -->
+    <div id="admin-check" class="loading-spinner">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Đang kiểm tra quyền truy cập...</span>
+        </div>
+        <p class="mt-3">Đang kiểm tra quyền truy cập...</p>
+    </div>
+
+    <!-- Main Dashboard Content -->
+    <div id="dashboard-content" class="admin-only">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <nav class="col-md-3 col-lg-2 d-md-block sidebar">
+                    <div class="position-sticky pt-3">
+                        <div class="text-center mb-4">
+                            <img src="../img/Logo_xe_đạp_điện_có_tên_Lâm_và_Mạnh-removebg-preview.png" 
+                                 alt="Logo" width="80" class="mb-2">
+                            <h5 class="text-white">Admin Dashboard</h5>
+                        </div>
+                        
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link active" href="#" data-target="orders">
+                                    <i class="bi bi-cart-check"></i> Đơn hàng
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-target="customers">
+                                    <i class="bi bi-people"></i> Khách hàng
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-target="revenue">
+                                    <i class="bi bi-graph-up"></i> Doanh thu
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-target="sales">
+                                    <i class="bi bi-bar-chart"></i> Hiệu suất bán
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-target="marketing">
+                                    <i class="bi bi-megaphone"></i> Marketing
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-target="finance">
+                                    <i class="bi bi-cash-stack"></i> Tài chính
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-target="products">
+                                    <i class="bi bi-box"></i> Sản phẩm
+                                </a>
+                            </li>
+                            <li class="nav-item mt-4">
+                                <a class="nav-link" href="Trang Chủ.html">
+                                    <i class="bi bi-house"></i> Về trang chủ
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" id="logout-btn">
+                                    <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+</nav>
+
+                <!-- Main content -->
+                <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                    <!-- Dashboard Header -->
+                    <div class="dashboard-header">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h2 class="mb-1" id="page-title">Dashboard - Đơn hàng</h2>
+                                <p class="text-muted mb-0">Quản lý và theo dõi hoạt động kinh doanh</p>
+                            </div>
+                            <div class="d-flex align-items-center">
+                                <span class="text-muted me-3">Xin chào, <strong id="admin-name">Admin</strong></span>
+                                
+                                <!-- Data Source Indicator -->
+                                <div id="data-source-indicator" class="me-3">
+                                    <span id="data-source-badge" class="badge bg-info">
+                                        <i class="bi bi-database"></i> Đang kiểm tra...
+                                    </span>
+                                </div>
+                                
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        <i class="bi bi-gear"></i> Cài đặt
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a class="dropdown-item" href="#" onclick="refreshData()"><i class="bi bi-arrow-clockwise"></i> Làm mới dữ liệu</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="checkDataSource()"><i class="bi bi-wifi"></i> Kiểm tra kết nối</a></li>
+                                        <li><a class="dropdown-item" href="#" onclick="exportData()"><i class="bi bi-download"></i> Xuất báo cáo</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dashboard Content -->
+                    <div class="dashboard-content">
+                        <!-- No Data Warning -->
+                        <div id="no-data-warning" class="alert alert-danger" style="display: none;">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>Cảnh báo:</strong> Không thể tải dữ liệu từ MongoDB. 
+                            Vui lòng kiểm tra MongoDB và Spring Boot có đang chạy không?
+                        </div>
+                        <!-- Orders Section -->
+  <div id="orders" class="section active">
+                            <!-- Stats Cards -->
+                            <div class="row mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card primary">
+                                        <div class="stat-number text-primary" id="total-orders">0</div>
+                                        <div class="stat-label">Tổng đơn hàng</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card success">
+                                        <div class="stat-number text-success" id="completed-orders">0</div>
+                                        <div class="stat-label">Đã hoàn thành</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card warning">
+                                        <div class="stat-number text-warning" id="pending-orders">0</div>
+                                        <div class="stat-label">Đang chờ</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card danger">
+                                        <div class="stat-number text-danger" id="cancelled-orders">0</div>
+                                        <div class="stat-label">Đã hủy</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Orders Table -->
+                            <div class="table-container">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="mb-0">Danh sách đơn hàng</h5>
+                                    <div class="d-flex gap-2">
+                                        <select class="form-select" id="order-status-filter" style="width: auto;">
+                                            <option value="">Tất cả trạng thái</option>
+                                            <option value="pending">Đang chờ</option>
+                                            <option value="shipped">Đang giao</option>
+                                            <option value="completed">Hoàn thành</option>
+                                            <option value="cancelled">Đã hủy</option>
+                                        </select>
+                                        <button class="btn btn-primary btn-admin" onclick="refreshOrders()">
+                                            <i class="bi bi-arrow-clockwise"></i> Làm mới
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Khách hàng</th>
+                                                <th>Tổng tiền</th>
+                                                <th>Trạng thái</th>
+                                                <th>Ngày tạo</th>
+                                                <th>Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="ordersTable">
+                                            <!-- Orders will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+  </div>
+
+                        <!-- Customers Section -->
+  <div id="customers" class="section">
+                            <!-- Customer Stats -->
+                            <div class="row mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card primary">
+                                        <div class="stat-number text-primary" id="total-customers">0</div>
+                                        <div class="stat-label">Tổng khách hàng</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card success">
+                                        <div class="stat-number text-success" id="active-customers">0</div>
+                                        <div class="stat-label">Khách hàng tích cực</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card info">
+                                        <div class="stat-number text-info" id="vip-customers">0</div>
+                                        <div class="stat-label">Khách VIP</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card warning">
+                                        <div class="stat-number text-warning" id="potential-customers">0</div>
+                                        <div class="stat-label">Khách tiềm năng</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Customer Table -->
+                            <div class="table-container">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="mb-0">Danh sách khách hàng</h5>
+                                    <div class="d-flex gap-2">
+                                        <input type="text" class="form-control" id="searchUser" placeholder="Tìm tên/email..." style="width: 250px;">
+                                        <button class="btn btn-primary btn-admin" onclick="refreshCustomers()">
+                                            <i class="bi bi-arrow-clockwise"></i> Làm mới
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Tên</th>
+                                                <th>Email</th>
+                                                <th>Số điện thoại</th>
+                                                <th>Địa chỉ</th>
+                                                <th>Loại</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="usersTable">
+                                            <!-- Users will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+  </div>
+
+                        <!-- Revenue Section -->
+  <div id="revenue" class="section">
+                            <!-- Revenue Stats -->
+                            <div class="row mb-4">
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="stat-card success">
+                                        <div class="stat-number text-success" id="total-revenue">0 ₫</div>
+                                        <div class="stat-label">Tổng doanh thu</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="stat-card primary">
+                                        <div class="stat-number text-primary" id="avg-order-value">0 ₫</div>
+                                        <div class="stat-label">Giá trị đơn hàng TB</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-4 col-md-6 mb-4">
+                                    <div class="stat-card info">
+                                        <div class="stat-number text-info" id="conversion-rate">0%</div>
+                                        <div class="stat-label">Tỷ lệ chuyển đổi</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Revenue Chart -->
+                            <div class="chart-container">
+                                <h5 class="mb-3">Biểu đồ doanh thu</h5>
+                                <canvas id="revenueChart" width="400" height="100"></canvas>
+                            </div>
+  </div>
+
+                        <!-- Sales Performance Section -->
+  <div id="sales" class="section">
+                            <!-- Top Products -->
+                            <div class="table-container mb-4">
+                                <h5 class="mb-3">Sản phẩm bán chạy</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Tên sản phẩm</th>
+                                                <th>Đã bán</th>
+                                                <th>Tồn kho</th>
+                                                <th>Giá</th>
+                                                <th>Trạng thái</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="topProducts">
+                                            <!-- Top products will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- Low Stock Products -->
+                            <div class="table-container">
+                                <h5 class="mb-3">Sản phẩm tồn kho thấp</h5>
+                                <div id="lowStock">
+                                    <!-- Low stock products will be loaded here -->
+                                </div>
+                            </div>
+  </div>
+
+                        <!-- Marketing Section -->
+  <div id="marketing" class="section">
+                            <div class="table-container">
+                                <h5 class="mb-3">Hiệu quả Marketing</h5>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Kênh</th>
+                                                <th>Chi phí</th>
+                                                <th>Doanh thu</th>
+                                                <th>ROI</th>
+                                                <th>Trạng thái</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="mktTable">
+                                            <!-- Marketing data will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+  </div>
+
+                        <!-- Finance Section -->
+  <div id="finance" class="section">
+                            <div class="row mb-4">
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card success">
+                                        <div class="stat-number text-success" id="finance-revenue">0 ₫</div>
+                                        <div class="stat-label">Doanh thu</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card danger">
+                                        <div class="stat-number text-danger" id="finance-cost">0 ₫</div>
+                                        <div class="stat-label">Chi phí vận hành</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card primary">
+                                        <div class="stat-number text-primary" id="finance-profit">0 ₫</div>
+                                        <div class="stat-label">Lợi nhuận</div>
+                                    </div>
+                                </div>
+                                <div class="col-xl-3 col-md-6 mb-4">
+                                    <div class="stat-card warning">
+                                        <div class="stat-number text-warning" id="finance-tax">0 ₫</div>
+                                        <div class="stat-label">Thuế ước tính</div>
+                                    </div>
+                                </div>
+                            </div>
+  </div>
+
+                        <!-- Products Management Section -->
+  <div id="products" class="section">
+                            <!-- Add/Edit Product Form -->
+                            <div class="table-container mb-4">
+                                <h5 class="mb-3">Quản lý sản phẩm</h5>
+                                <form id="prodForm" class="row g-3">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="pname" placeholder="Tên sản phẩm" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="number" class="form-control" id="pprice" placeholder="Giá" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="number" class="form-control" id="pstock" placeholder="Tồn kho" required>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="pcategory">
+                                            <option value="Xe Đô Thị">Xe Đô Thị</option>
+                                            <option value="Xe Phiêu Lưu">Xe Phiêu Lưu</option>
+                                            <option value="Xe Giá Rẻ">Xe Giá Rẻ</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="submit" class="btn btn-success btn-admin w-100">
+                                            <i class="bi bi-plus"></i> Thêm
+                                        </button>
+                                    </div>
+      <input type="hidden" id="editIndex">
+                                </form>
+                            </div>
+
+                            <!-- Products Table -->
+                            <div class="table-container">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="mb-0">Danh sách sản phẩm</h5>
+                                    <button class="btn btn-primary btn-admin" onclick="refreshProducts()">
+                                        <i class="bi bi-arrow-clockwise"></i> Làm mới
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Tên sản phẩm</th>
+                                                <th>Giá</th>
+                                                <th>Tồn kho</th>
+                                                <th>Danh mục</th>
+                                                <th>Hành động</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="prodTable">
+                                            <!-- Products will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+  </div>
+</main>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../js/api.js"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+        // Dashboard Application
+        class DashboardApp {
+            constructor() {
+                console.log('DashboardApp constructor called');
+                this.currentSection = 'orders';
+                this.data = {
+                    orders: [],
+                    users: [],
+                    products: []
+                };
+                this.init();
+            }
+
+            async init() {
+                console.log('Initializing dashboard...');
+                
+                // Check admin access first (server-backed)
+                try {
+                    const allowed = await AdminAuth.checkAdminAccess();
+                    if (!allowed) {
+                        console.log('Admin access denied, redirecting to login');
+                        window.location.href = 'admin-login.html';
+                        return;
+                    }
+                    console.log('Admin access granted');
+                } catch (e) {
+                    console.error('Error checking admin access:', e);
+                    window.location.href = 'admin-login.html';
+                    return;
+                }
+
+                // Before loading data, check MongoDB health via backend
+                try {
+                    // Use absolute backend URL to avoid file-server origin issues
+                    const resp = await fetch('http://localhost:8080/api/health/db');
+                    if (!resp.ok) throw new Error('DB ping failed');
+                    console.log('MongoDB ping OK');
+                } catch (dbErr) {
+                    console.error('MongoDB ping failed:', dbErr);
+                    // Show database connection error UI and stop init
+                    document.getElementById('admin-check').style.display = 'none';
+                    document.getElementById('dashboard-content').classList.remove('show');
+                    this.showDatabaseConnectionError();
+                    return;
+                }
+
+                // Show dashboard content
+                document.getElementById('admin-check').style.display = 'none';
+                document.getElementById('dashboard-content').classList.add('show');
+
+                // Set admin name
+                const admin = AdminAuth.getCurrentAdmin();
+                document.getElementById('admin-name').textContent = admin.name || admin.email;
+
+                // Initialize event listeners
+                this.initEventListeners();
+
+                // Load initial data
+                await this.loadData();
+
+                // Ensure only orders section is active initially
+                this.switchSection('orders');
+            }
+
+            initEventListeners() {
+                console.log('Initializing event listeners...');
+                
+                // Navigation
+                document.querySelectorAll('.nav-link[data-target]').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = link.dataset.target;
+                        console.log('Navigation clicked:', target);
+                        this.switchSection(target);
+    });
+  });
+
+                // Logout
+                document.getElementById('logout-btn').addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.logout();
+                });
+
+                // Search functionality
+                document.getElementById('searchUser').addEventListener('input', (e) => {
+                    this.filterUsers(e.target.value);
+                });
+
+                // Order status filter
+                document.getElementById('order-status-filter').addEventListener('change', (e) => {
+                    this.filterOrders(e.target.value);
+                });
+
+                // Product form
+                document.getElementById('prodForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.handleProductSubmit(e);
+                });
+            }
+
+            async loadData() {
+                try {
+                    console.log('🔄 Loading data from MongoDB...');
+                    this.updateDataSourceIndicator('connecting');
+                    
+                    // Try to load from API first
+                    const [ordersData, customersData, productsData] = await Promise.all([
+                        this.loadOrdersFromAPI(),
+                        this.loadCustomersFromAPI(),
+                        this.loadProductsFromAPI()
+                    ]);
+
+                    console.log('📡 API results:', { ordersData, customersData, productsData });
+
+                    // Always prioritize MongoDB data - only use mock data if API fails completely
+                    console.log('🔄 Processing API results...');
+                    console.log('📡 Raw API results:', { ordersData, customersData, productsData });
+                    
+                    if (ordersData !== null && ordersData !== undefined && Array.isArray(ordersData)) {
+                        console.log('✅ Using REAL orders data from MongoDB');
+                        this.data.orders = ordersData;
+                    } else if (ordersData && ordersData.orders && Array.isArray(ordersData.orders)) {
+                        console.log('✅ Using REAL orders data from nested response');
+                        this.data.orders = ordersData.orders;
+                    } else {
+                        console.log('⚠️ No valid orders data from API');
+                        console.log('🚀 Attempting to create initial MongoDB data...');
+                        await this.createInitialOrdersIfNeeded();
+                        // Retry loading from API
+                        const retryData = await this.loadOrdersFromAPI();
+                        if (retryData !== null && retryData !== undefined && Array.isArray(retryData)) {
+                            console.log('✅ Successfully loaded orders after initialization');
+                            this.data.orders = retryData;
+                        } else {
+                            console.log('🔍 Retry also failed, checking MongoDB connection...');
+                            await this.showDatabaseConnectionError();
+                            // No fallback - require MongoDB connection
+                            this.data.orders = [];
+                            Utils.showNotification('❌ Dashboard requires MongoDB connection to function. Please ensure MongoDB and Spring Boot are running.', 'error');
+                        }
+                    }
+                    
+                    // Handle users data
+                    if (customersData !== null && customersData !== undefined && Array.isArray(customersData)) {
+                        console.log('✅ Using REAL users data from MongoDB');
+                        this.data.users = customersData;
+                    } else if (customersData && customersData.customers && Array.isArray(customersData.customers)) {
+                        console.log('✅ Using REAL users data from nested response');
+                        this.data.users = customersData.customers;
+                    } else {
+                        console.log('⚠️ No users data from API, initializing empty array');
+                        this.data.users = []; // Empty array instead of mock data
+                    }
+                    
+                    // Handle products data
+                    if (productsData !== null && productsData !== undefined && Array.isArray(productsData)) {
+                        console.log('✅ Using REAL products data from MongoDB');
+                        this.data.products = productsData;
+                    } else if (productsData && productsData.products && Array.isArray(productsData.products)) {
+                        console.log('✅ Using REAL products data from nested response');
+                        this.data.products = productsData.products;
+                    } else {
+                        console.log('⚠️ No products data from API, initializing empty array');
+                        this.data.products = []; // Empty array instead of mock data
+                    }
+
+                    console.log('📊 Final data loaded:', {
+                        orders: `${this.data.orders.length} orders`,
+                        users: `${this.data.users.length} users`,
+                        products: `${this.data.products.length} products`
+                    });
+                    
+                    // Update data source indicator
+                    this.updateDataSourceIndicator('connected', this.data.orders.length);
+                    
+                    // Hide warning if we have data
+                    if (this.data.orders.length > 0) {
+                        this.showNoDataWarning(false);
+                    }
+
+                    // Show sample of orders data
+                    if (this.data.orders.length > 0) {
+                        console.log('📋 Sample orders:', this.data.orders.slice(0, 3));
+                    } else {
+                        console.log('❌ No orders in final data! Check MongoDB connection.');
+                    }
+
+                } catch (error) {
+                    console.error('🚨 Error loading data from API:', error);
+                    // No offline fallback - require MongoDB
+                    this.data.orders = [];
+                    this.data.users = [];
+                    this.data.products = [];
+                    await this.showDatabaseConnectionError();
+                    Utils.showNotification('❌ Dashboard requires MongoDB connection. Please ensure MongoDB and Spring Boot are running.', 'error');
+                }
+            }
+
+            async loadOrdersFromAPI() {
+                try {
+                    console.log('📡 Loading orders from API...');
+                    // Dashboard order endpoint returns aggregated stats; for raw orders use GET /orders
+                    // Use ApiService.getAllOrders() which returns array of orders
+                    if (ApiService.getAllOrders) {
+                        const orders = await ApiService.getAllOrders();
+                        console.log('✅ Loaded orders via ApiService.getAllOrders():', orders && orders.length);
+                        return Array.isArray(orders) ? orders : null;
+                    }
+                    // Fallback: try orders dashboard (may not return list)
+                    const result = await ApiService.getOrderDashboard();
+                    console.log('🔍 Raw API response:', result);
+                    return null;
+                } catch (error) {
+                    console.error('🚨 Error loading orders from API:', error);
+                    console.log('🔧 Check if:', '1. Spring Boot is running', '2. MongoDB is running', '3. API endpoint is correct');
+                    return null;
+                }
+            }
+
+            async loadCustomersFromAPI() {
+                try {
+                    console.log('Loading customers from API...');
+                    // Try to get all users
+                    if (ApiService.getAllUsers) {
+                        const users = await ApiService.getAllUsers();
+                        return Array.isArray(users) ? users : null;
+                    }
+                    const result = await ApiService.getCustomerDashboard();
+                    console.log('Customers loaded from API (fallback):', result);
+                    return null;
+                } catch (error) {
+                    console.error('Error loading customers:', error);
+                    return null;
+                }
+            }
+
+            async loadProductsFromAPI() {
+                try {
+                    console.log('Loading products from API...');
+                    // Use ApiService.getProducts() to fetch product list
+                    if (ApiService.getProducts) {
+                        const products = await ApiService.getProducts();
+                        return Array.isArray(products) ? products : null;
+                    }
+                    const result = await ApiService.getProductManagementDashboard();
+                    console.log('Products loaded from API (fallback):', result);
+                    return null;
+                } catch (error) {
+                    console.error('Error loading products:', error);
+                    return null;
+                }
+            }
+
+            switchSection(sectionName) {
+                console.log('Switching to section:', sectionName);
+                
+                // Update navigation
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
+                });
+                const targetLink = document.querySelector(`[data-target="${sectionName}"]`);
+                if (targetLink) {
+                    targetLink.classList.add('active');
+                }
+
+                // Update page title
+                const titles = {
+                    'orders': 'Dashboard - Đơn hàng',
+                    'customers': 'Dashboard - Khách hàng',
+                    'revenue': 'Dashboard - Doanh thu',
+                    'sales': 'Dashboard - Hiệu suất bán',
+                    'marketing': 'Dashboard - Marketing',
+                    'finance': 'Dashboard - Tài chính',
+                    'products': 'Dashboard - Sản phẩm'
+                };
+                document.getElementById('page-title').textContent = titles[sectionName];
+
+                // Hide all sections
+                document.querySelectorAll('.section').forEach(section => {
+                    section.classList.remove('active');
+                    console.log('Hiding section:', section.id);
+                });
+
+                // Show current section
+                const currentSection = document.getElementById(sectionName);
+                if (currentSection) {
+                    currentSection.classList.add('active');
+                    console.log('Showing section:', sectionName);
+                } else {
+                    console.error('Section not found:', sectionName);
+                }
+
+                this.currentSection = sectionName;
+                this.renderSection(sectionName);
+            }
+
+            renderSection(sectionName) {
+                console.log('Rendering section:', sectionName);
+                switch (sectionName) {
+                    case 'orders':
+                        this.renderOrders();
+                        break;
+                    case 'customers':
+                        this.renderCustomers();
+                        break;
+                    case 'revenue':
+                        this.renderRevenue();
+                        break;
+                    case 'sales':
+                        this.renderSales();
+                        break;
+                    case 'marketing':
+                        this.renderMarketing();
+                        break;
+                    case 'finance':
+                        this.renderFinance();
+                        break;
+                    case 'products':
+                        this.renderProducts();
+                        break;
+                    default:
+                        console.error('Unknown section:', sectionName);
+                }
+            }
+
+            renderOrders() {
+                console.log('Rendering orders section...');
+                const orders = this.data.orders;
+                
+                console.log('Orders data from MongoDB:', orders);
+                console.log('Number of orders:', orders.length);
+                
+                if (orders.length === 0) {
+                    console.warn('⚠️ No orders found in data.orders array!');
+                    console.log('Available data keys:', Object.keys(this.data));
+                    console.log('Full data object:', this.data);
+                }
+                
+                // Calculate stats from real data
+                const stats = {
+                    total: orders.length,
+                    completed: orders.filter(o => o.status === 'completed' || o.status === 'delivered').length,
+                    pending: orders.filter(o => o.status === 'pending').length,
+                    cancelled: orders.filter(o => o.status === 'cancelled').length
+                };
+                
+                console.log('Calculated stats:', stats);
+                
+                // Update stats cards
+                document.getElementById('total-orders').textContent = stats.total;
+                document.getElementById('completed-orders').textContent = stats.completed;
+                document.getElementById('pending-orders').textContent = stats.pending;
+                document.getElementById('cancelled-orders').textContent = stats.cancelled;
+
+                // Render orders table
+                this.renderOrdersTable();
+                
+                // Also show count in console for debugging
+                console.log(`📊 Dashboard shows: ${stats.total} total orders`);
+            }
+
+            renderOrdersTable() {
+                const tbody = document.getElementById('ordersTable');
+                const orders = this.data.orders;
+                const users = this.data.users;
+
+                tbody.innerHTML = orders.map((order, index) => {
+                    const user = users.find(u => u.id === order.userId) || users[index % users.length];
+                    const statusClass = this.getStatusClass(order.status);
+                    const statusText = this.getStatusText(order.status);
+                    const orderDate = order.createdAt || order.date || new Date().toISOString();
+
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${user ? user.name : 'Unknown User'}</td>
+                            <td>${Utils.formatPrice(order.totalPrice || order.totalAmount || 0)}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td>${new Date(orderDate).toLocaleDateString('vi-VN')}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="dashboardApp.updateOrderStatus('${order.id}', 'shipped')">
+                                    <i class="bi bi-truck"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success me-1" onclick="dashboardApp.updateOrderStatus('${order.id}', 'delivered')">
+                                    <i class="bi bi-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="dashboardApp.updateOrderStatus('${order.id}', 'cancelled')">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            renderCustomers() {
+                console.log('Rendering customers section...');
+                const users = this.data.users;
+                const orders = this.data.orders;
+                
+                // Calculate stats from real data
+                const customerUsers = users.filter(u => u.role === 'customer');
+                const customerIds = [...new Set(orders.map(o => o.userId))];
+                const activeCustomers = customerIds.length;
+                
+                const stats = {
+                    total: customerUsers.length,
+                    active: activeCustomers,
+                    vip: customerUsers.filter(u => u.name && u.name.includes('VIP')).length,
+                    potential: customerUsers.length - activeCustomers
+                };
+                
+                // Update stats cards
+                document.getElementById('total-customers').textContent = stats.total;
+                document.getElementById('active-customers').textContent = stats.active;
+                document.getElementById('vip-customers').textContent = stats.vip;
+                document.getElementById('potential-customers').textContent = stats.potential;
+
+                // Render customers table
+                this.renderCustomersTable();
+            }
+
+            renderCustomersTable() {
+                const tbody = document.getElementById('usersTable');
+                const users = this.data.users.filter(u => u.role !== 'admin');
+
+                tbody.innerHTML = users.map((user, index) => {
+                    const customerType = user.name.includes('Admin') ? 'VIP' : 'Thường';
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>${user.phone}</td>
+                            <td>${user.address}</td>
+                            <td><span class="badge bg-primary">${customerType}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            renderRevenue() {
+                console.log('Rendering revenue section...');
+                const stats = DashboardData.getRevenueStats();
+                
+                // Update stats cards
+                document.getElementById('total-revenue').textContent = Utils.formatPrice(stats.totalRevenue);
+                document.getElementById('avg-order-value').textContent = Utils.formatPrice(stats.avgOrderValue);
+                document.getElementById('conversion-rate').textContent = stats.conversionRate.toFixed(1) + '%';
+
+                // Render revenue chart
+                this.renderRevenueChart();
+            }
+
+            renderRevenueChart() {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+                const orders = this.data.orders.filter(o => o.status === 'completed');
+                
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: orders.map((_, i) => `Đơn ${i + 1}`),
+                        datasets: [{
+                            label: 'Doanh thu (₫)',
+                            data: orders.map(o => o.totalAmount),
+                            borderColor: '#007bff',
+                            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return Utils.formatPrice(value);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            renderSales() {
+                console.log('Rendering sales section...');
+                const topProducts = DashboardData.getTopProducts();
+                const lowStockProducts = DashboardData.getLowStockProducts();
+
+                // Render top products
+                const topProductsTbody = document.getElementById('topProducts');
+                topProductsTbody.innerHTML = topProducts.map((product, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${product.name}</td>
+                        <td><span class="badge bg-success">${product.sold}</span></td>
+                        <td><span class="badge ${product.stock < 5 ? 'bg-danger' : 'bg-primary'}">${product.stock}</span></td>
+                        <td>${Utils.formatPrice(product.price)}</td>
+                        <td>
+                            <span class="badge ${product.stock < 5 ? 'bg-warning' : 'bg-success'}">
+                                ${product.stock < 5 ? 'Tồn kho thấp' : 'Bình thường'}
+                            </span>
+                        </td>
+                    </tr>
+                `).join('');
+
+                // Render low stock products
+                const lowStockDiv = document.getElementById('lowStock');
+                if (lowStockProducts.length > 0) {
+                    lowStockDiv.innerHTML = lowStockProducts.map(product => `
+                        <div class="alert alert-warning d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>${product.name}</strong> - Tồn kho: ${product.stock}
+                            </div>
+                            <button class="btn btn-sm btn-outline-primary" onclick="dashboardApp.restockProduct(${product.id})">
+                                <i class="bi bi-plus"></i> Nhập kho
+                            </button>
+                        </div>
+                    `).join('');
+                } else {
+                    lowStockDiv.innerHTML = '<div class="alert alert-success">Tất cả sản phẩm đều có đủ tồn kho!</div>';
+                }
+            }
+
+            renderMarketing() {
+                console.log('Rendering marketing section...');
+                const mktData = [
+                    { channel: 'Facebook', cost: 8000000, revenue: 22000000 },
+                    { channel: 'Google', cost: 10000000, revenue: 30000000 },
+                    { channel: 'Email', cost: 1000000, revenue: 2500000 },
+                    { channel: 'TikTok', cost: 5000000, revenue: 4000000 }
+                ];
+
+                const tbody = document.getElementById('mktTable');
+                tbody.innerHTML = mktData.map(data => {
+                    const roi = ((data.revenue - data.cost) / data.cost * 100).toFixed(1);
+                    const status = roi > 100 ? 'success' : roi > 50 ? 'warning' : 'danger';
+                    
+                    return `
+                        <tr>
+                            <td><strong>${data.channel}</strong></td>
+                            <td>${Utils.formatPrice(data.cost)}</td>
+                            <td>${Utils.formatPrice(data.revenue)}</td>
+                            <td><span class="badge bg-${status}">${roi}%</span></td>
+                            <td>
+                                <span class="badge bg-${status}">
+                                    ${roi > 100 ? 'Tốt' : roi > 50 ? 'Trung bình' : 'Cần cải thiện'}
+                                </span>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            renderFinance() {
+                console.log('Rendering finance section...');
+                const stats = DashboardData.getRevenueStats();
+                const operatingCost = 20000000;
+                const profit = stats.totalRevenue - operatingCost;
+                const tax = profit * 0.1;
+
+                document.getElementById('finance-revenue').textContent = Utils.formatPrice(stats.totalRevenue);
+                document.getElementById('finance-cost').textContent = Utils.formatPrice(operatingCost);
+                document.getElementById('finance-profit').textContent = Utils.formatPrice(profit);
+                document.getElementById('finance-tax').textContent = Utils.formatPrice(tax);
+            }
+
+            renderProducts() {
+                console.log('Rendering products section...');
+                const tbody = document.getElementById('prodTable');
+                tbody.innerHTML = this.data.products.map((product, index) => `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${product.name}</td>
+                        <td>${Utils.formatPrice(product.price)}</td>
+                        <td><span class="badge ${product.stock < 5 ? 'bg-danger' : 'bg-primary'}">${product.stock}</span></td>
+                        <td><span class="badge bg-secondary">${product.category}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary me-1" onclick="dashboardApp.editProduct(${index})">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="dashboardApp.deleteProduct(${index})">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Utility methods
+            getStatusClass(status) {
+                const classes = {
+                    'completed': 'status-completed',
+                    'shipped': 'status-shipped',
+                    'pending': 'status-pending',
+                    'cancelled': 'status-cancelled'
+                };
+                return classes[status] || 'status-pending';
+            }
+
+            getStatusText(status) {
+                const texts = {
+                    'completed': 'Hoàn thành',
+                    'shipped': 'Đang giao',
+                    'pending': 'Đang chờ',
+                    'cancelled': 'Đã hủy'
+                };
+                return texts[status] || 'Đang chờ';
+            }
+
+            // Action methods
+            async updateOrderStatus(orderId, newStatus) {
+                try {
+                    console.log('Updating order status:', orderId, newStatus);
+                    const result = await ApiService.updateOrderStatus(orderId, newStatus);
+                    console.log('Update result:', result);
+                    
+                    if (result.success) {
+                        Utils.showNotification('Cập nhật trạng thái đơn hàng thành công!', 'success');
+                        await this.loadData();
+                        this.renderOrders();
+                    } else {
+                        Utils.showNotification(result.error || 'Lỗi khi cập nhật trạng thái đơn hàng', 'error');
+                    }
+                } catch (error) {
+                    console.error('Error updating order status:', error);
+                    Utils.showNotification('Lỗi khi cập nhật trạng thái đơn hàng', 'error');
+                }
+            }
+
+            editProduct(index) {
+                const product = this.data.products[index];
+                document.getElementById('pname').value = product.name;
+                document.getElementById('pprice').value = product.price;
+                document.getElementById('pstock').value = product.stock;
+                document.getElementById('pcategory').value = product.category;
+                document.getElementById('editIndex').value = index;
+                
+                // Change button text
+                document.querySelector('#prodForm button[type="submit"]').innerHTML = '<i class="bi bi-check"></i> Cập nhật';
+            }
+
+            async deleteProduct(index) {
+                if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
+                    try {
+                        const product = this.data.products[index];
+                        const result = await ApiService.deleteProduct(product.id);
+                        
+                        if (result.success) {
+                            Utils.showNotification('Xóa sản phẩm thành công!', 'success');
+                            await this.loadData();
+                            this.renderProducts();
+                        } else {
+                            Utils.showNotification(result.error || 'Lỗi khi xóa sản phẩm', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error deleting product:', error);
+                        Utils.showNotification('Lỗi khi xóa sản phẩm', 'error');
+                    }
+                }
+            }
+
+            async handleProductSubmit(e) {
+                const name = document.getElementById('pname').value;
+                const price = parseInt(document.getElementById('pprice').value);
+                const stock = parseInt(document.getElementById('pstock').value);
+                const category = document.getElementById('pcategory').value;
+                const editIndex = document.getElementById('editIndex').value;
+
+                try {
+                    if (editIndex !== '') {
+                        // Update existing product
+                        const product = this.data.products[editIndex];
+                        const productData = {
+                            name, price, stock, category,
+                            brand: product.brand || 'Unknown',
+                            imageUrl: product.imageUrl || '../img/default.jpg'
+                        };
+                        
+                        const result = await ApiService.updateProduct(product.id, productData);
+                        if (result.success) {
+                            Utils.showNotification('Cập nhật sản phẩm thành công!', 'success');
+                            await this.loadData();
+                            this.renderProducts();
+                        } else {
+                            Utils.showNotification(result.error || 'Lỗi khi cập nhật sản phẩm', 'error');
+                        }
+                    } else {
+                        // Add new product
+                        const productData = {
+                            name, price, stock, category,
+                            brand: 'Unknown',
+                            imageUrl: '../img/default.jpg'
+                        };
+                        
+                        const result = await ApiService.addProduct(productData);
+                        if (result.success) {
+                            Utils.showNotification('Thêm sản phẩm thành công!', 'success');
+                            await this.loadData();
+                            this.renderProducts();
+                        } else {
+                            Utils.showNotification(result.error || 'Lỗi khi thêm sản phẩm', 'error');
+                        }
+                    }
+
+                    // Reset form
+                    e.target.reset();
+                    document.getElementById('editIndex').value = '';
+                    document.querySelector('#prodForm button[type="submit"]').innerHTML = '<i class="bi bi-plus"></i> Thêm';
+                    
+                } catch (error) {
+                    console.error('Error handling product submit:', error);
+                    Utils.showNotification('Lỗi khi xử lý sản phẩm', 'error');
+                }
+            }
+
+            filterUsers(searchTerm) {
+                const tbody = document.getElementById('usersTable');
+                const users = this.data.users.filter(u => u.role !== 'admin');
+                const filteredUsers = users.filter(user => 
+                    user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+                );
+
+                tbody.innerHTML = filteredUsers.map((user, index) => {
+                    const customerType = user.name.includes('Admin') ? 'VIP' : 'Thường';
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${user.name}</td>
+                            <td>${user.email}</td>
+                            <td>${user.phone}</td>
+                            <td>${user.address}</td>
+                            <td><span class="badge bg-primary">${customerType}</span></td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            filterOrders(status) {
+                const tbody = document.getElementById('ordersTable');
+                const orders = status ? this.data.orders.filter(o => o.status === status) : this.data.orders;
+                const users = this.data.users;
+
+                tbody.innerHTML = orders.map((order, index) => {
+                    const user = users.find(u => u.id === order.userId) || users[index % users.length];
+                    const statusClass = this.getStatusClass(order.status);
+                    const statusText = this.getStatusText(order.status);
+
+                    return `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${user.name}</td>
+                            <td>${Utils.formatPrice(order.totalAmount)}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td>${new Date(order.date).toLocaleDateString('vi-VN')}</td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-primary me-1" onclick="dashboardApp.updateOrderStatus(${order.id}, 'shipped')">
+                                    <i class="bi bi-truck"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-success me-1" onclick="dashboardApp.updateOrderStatus(${order.id}, 'completed')">
+                                    <i class="bi bi-check"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" onclick="dashboardApp.updateOrderStatus(${order.id}, 'cancelled')">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+
+            async createInitialOrdersIfNeeded() {
+                console.log('🚀 Checking if MongoDB needs initialization...');
+                try {
+                    // Check if MongoDB has any orders
+                    const response = await fetch('http://localhost:8080/dashboard/orders', {
+                        headers: {
+                            'Authorization': 'Bearer admin@bikestore.com'
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        if (data.orders && data.orders.length > 0) {
+                            console.log(`✅ MongoDB already has ${data.orders.length} orders`);
+                            return;
+                        }
+                    }
+                    
+                    console.log('📝 MongoDB appears empty, creating initial orders...');
+                    await this.seedMongoDBData();
+                    
+                } catch (error) {
+                    console.error('❌ Error checking MongoDB initialization:', error);
+                    await this.showDatabaseConnectionError();
+                }
+            }
+
+            async seedMongoDBData() {
+                console.log('🌱 Seeding MongoDB with initial data...');
+                
+                // Create initial orders
+                const initialOrders = [
+                    {
+                        userId: "user1",
+                        items: [{ productId: "prod1", quantity: 1, price: 15000000 }],
+                        totalPrice: 15000000,
+                        status: "pending",
+                        createdAt: new Date(),
+                        shippingAddress: "Hà Nội"
+                    },
+                    {
+                        userId: "user2",
+                        items: [{ productId: "prod2", quantity: 1, price: 12000000 }],
+                        totalPrice: 12000000,
+                        status: "shipped",
+                        createdAt: new Date(),
+                        shippingAddress: "TP.HCM"
+                    },
+                    {
+                        userId: "user3",
+                        items: [{ productId: "prod3", quantity: 1, price: 18000000 }],
+                        totalPrice: 18000000,
+                        status: "delivered",
+                        createdAt: new Date(),
+                        shippingAddress: "Đà Nẵng"
+                    }
+                ];
+                
+                let successCount = 0;
+                for (const order of initialOrders) {
+                    try {
+                        const response = await fetch('http://localhost:8080/api/orders', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer admin@bikestore.com'
+                            },
+                            body: JSON.stringify(order)
+                        });
+                        
+                        if (response.ok) {
+                            successCount++;
+                            console.log(`✅ Created order ${successCount}/${initialOrders.length}`);
+                        }
+                    } catch (error) {
+                        console.error(`❌ Failed to create order: ${error.message}`);
+                    }
+                }
+                
+                console.log(`🎉 Seeding complete: ${successCount}/${initialOrders.length} orders created`);
+            }
+
+            updateDataSourceIndicator(connectionStatus = 'unknown', dataCount = 0) {
+                console.log('📊 Updating data source indicator...');
+                const badgeEl = document.getElementById('data-source-badge');
+                
+                switch (connectionStatus) {
+                    case 'connected':
+                        if (dataCount > 0) {
+                            badgeEl.innerHTML = `<i class="bi bi-database-check"></i> MongoDB (${dataCount} orders)`;
+                            badgeEl.className = 'badge bg-success';
+                        } else {
+                            badgeEl.innerHTML = '<i class="bi bi-database-dash"></i> MongoDB (trống)';
+                            badgeEl.className = 'badge bg-warning';
+                        }
+                        break;
+                    case 'connecting':
+                        badgeEl.innerHTML = '<i class="bi bi-hourglass-split"></i> Đang kết nối...';
+                        badgeEl.className = 'badge bg-info';
+                        break;
+                    case 'error':
+                        badgeEl.innerHTML = '<i class="bi bi-exclamation-triangle"></i> Lỗi kết nối';
+                        badgeEl.className = 'badge bg-danger';
+                        break;
+                    default:
+                        badgeEl.innerHTML = '<i class="bi bi-question-circle"></i> Đang kiểm tra...';
+                        badgeEl.className = 'badge bg-info';
+                }
+            }
+
+            showNoDataWarning(show = true) {
+                const warningEl = document.getElementById('no-data-warning');
+                warningEl.style.display = show ? 'block' : 'none';
+            }
+
+            async showDatabaseConnectionError() {
+                console.log('🚨 Showing database connection error...');
+                this.updateDataSourceIndicator('error');
+                this.showNoDataWarning(true);
+                Utils.showNotification('Không thể kết nối MongoDB. Vui lòng kiểm tra:', 'error');
+                
+                setTimeout(() => {
+                    Utils.showNotification('1. MongoDB có đang chạy không? (port 27017)', 'warning');
+                }, 2000);
+                
+                setTimeout(() => {
+                    Utils.showNotification('2. Spring Boot có đang chạy không? (port 8080)', 'warning');
+                }, 4000);
+                
+                setTimeout(() => {
+                    Utils.showNotification('3. Kiểm tra connection string trong application.properties', 'warning');
+                }, 6000);
+            }
+
+            logout() {
+                AdminAuth.clear();
+                Utils.showNotification('Đã đăng xuất thành công!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'Trang Chủ.html';
+                }, 700);
+            }
+        }
+
+        // Global functions
+        function refreshData() {
+            dashboardApp.loadData().then(() => {
+                dashboardApp.renderSection(dashboardApp.currentSection);
+                Utils.showNotification('Dữ liệu đã được làm mới!', 'success');
+            });
+        }
+
+        function refreshOrders() {
+            dashboardApp.renderOrders();
+        }
+
+        function refreshCustomers() {
+            dashboardApp.renderCustomers();
+        }
+
+        function refreshProducts() {
+            dashboardApp.renderProducts();
+        }
+
+        function exportData() {
+            Utils.showNotification('Tính năng xuất báo cáo đang được phát triển', 'info');
+        }
+
+        async function checkDataSource() {
+            Utils.showNotification('🔍 Đang kiểm tra nguồn dữ liệu...', 'info');
+            if (dashboardApp) {
+                await dashboardApp.loadData();
+                dashboardApp.renderSection(dashboardApp.currentSection);
+                Utils.showNotification('✅ Đã kiểm tra và cập nhật nguồn dữ liệu', 'success');
+            }
+        }
+
+        // Initialize dashboard when page loads
+        let dashboardApp;
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, initializing dashboard...');
+            try {
+                dashboardApp = new DashboardApp();
+                console.log('DashboardApp created successfully');
+            } catch (error) {
+                console.error('Error creating DashboardApp:', error);
+            }
+        });
+</script>
+</body>
+</html>

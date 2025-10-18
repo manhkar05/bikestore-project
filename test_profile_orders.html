@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Profile Orders Integration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="fontend/css/bootstrap.min.css" rel="stylesheet">
+    <link href="fontend/css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Test Profile Orders Integration</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Test Order Functions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="userId" class="form-label">User ID:</label>
+                            <input type="text" id="userId" class="form-control" placeholder="Enter user ID">
+                        </div>
+                        <button id="testLoadOrders" class="btn btn-primary mb-2">Load User Orders</button>
+                        <button id="testOrderDetails" class="btn btn-info mb-2">Test Order Details Modal</button>
+                        <button id="testCancelOrder" class="btn btn-warning mb-2">Test Cancel Order</button>
+                        <div id="testResult" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Orders Display</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="ordersDisplay"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="fontend/js/api.js"></script>
+    <script src="fontend/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let orders = [];
+
+        // Helper functions (copied from profile page)
+        function getStatusBadgeClass(status) {
+            switch (status) {
+                case 'pending': return 'bg-warning';
+                case 'shipped': return 'bg-info';
+                case 'delivered': return 'bg-success';
+                case 'cancelled': return 'bg-danger';
+                default: return 'bg-secondary';
+            }
+        }
+
+        function getStatusText(status) {
+            switch (status) {
+                case 'pending': return 'Chờ xử lý';
+                case 'shipped': return 'Đang giao';
+                case 'delivered': return 'Đã giao';
+                case 'cancelled': return 'Đã hủy';
+                default: return 'Không xác định';
+            }
+        }
+
+        function getPaymentMethodText(method) {
+            switch (method) {
+                case 'cod': return 'Thanh toán khi nhận hàng';
+                case 'card': return 'Thẻ tín dụng';
+                case 'bank': return 'Chuyển khoản ngân hàng';
+                default: return 'Chưa xác định';
+            }
+        }
+
+        // View order details
+        function viewOrderDetails(orderId) {
+            const order = orders.find(o => o.id === orderId);
+            if (order) {
+                const modal = document.createElement('div');
+                modal.className = 'modal fade';
+                modal.innerHTML = `
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Chi tiết đơn hàng #${order.id}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Thông tin đơn hàng</h6>
+                                        <p><strong>Ngày đặt:</strong> ${Utils.formatDate(order.createdAt)}</p>
+                                        <p><strong>Trạng thái:</strong> <span class="badge ${getStatusBadgeClass(order.status)}">${getStatusText(order.status)}</span></p>
+                                        <p><strong>Phương thức thanh toán:</strong> ${getPaymentMethodText(order.paymentMethod)}</p>
+                                        <p><strong>Địa chỉ giao hàng:</strong> ${order.shippingAddress || 'Chưa cập nhật'}</p>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Sản phẩm</h6>
+                                        ${order.items ? order.items.map(item => `
+                                            <div class="d-flex align-items-center mb-2">
+                                                <img src="${item.imageUrl || '../img/1.jpg'}" alt="" class="me-3" style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;">
+                                                <div class="flex-grow-1">
+                                                    <div class="fw-bold">${item.name}</div>
+                                                    <div class="text-muted">Số lượng: ${item.quantity}</div>
+                                                    <div class="text-danger fw-bold">${Utils.formatPrice(item.price)}</div>
+                                                </div>
+                                            </div>
+                                        `).join('') : '<p class="text-muted">Không có sản phẩm</p>'}
+                                        <hr>
+                                        <div class="d-flex justify-content-between">
+                                            <strong>Tổng tiền:</strong>
+                                            <strong class="text-danger">${Utils.formatPrice(order.totalPrice)}</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                const bsModal = new bootstrap.Modal(modal);
+                bsModal.show();
+
+                modal.addEventListener('hidden.bs.modal', () => {
+                    document.body.removeChild(modal);
+                });
+            }
+        }
+
+        // Cancel order
+        async function cancelOrder(orderId) {
+            if (confirm('Bạn có chắc chắn muốn hủy đơn hàng này?')) {
+                try {
+                    await ApiService.updateOrderStatus(orderId, 'cancelled');
+                    Utils.showNotification('Đã hủy đơn hàng', 'success');
+                    loadOrders(); // Reload orders
+                } catch (error) {
+                    console.error('Lỗi khi hủy đơn hàng:', error);
+                    Utils.showNotification('Không thể hủy đơn hàng', 'error');
+                }
+            }
+        }
+
+        // Load orders
+        async function loadOrders() {
+            const userId = document.getElementById('userId').value;
+            if (!userId) {
+                document.getElementById('testResult').innerHTML = '<div class="alert alert-warning">Please enter a User ID</div>';
+                return;
+            }
+
+            try {
+                document.getElementById('testResult').innerHTML = '<div class="spinner-border" role="status"></div> Loading...';
+                orders = await ApiService.getUserOrders(userId);
+                displayOrders();
+                document.getElementById('testResult').innerHTML = `<div class="alert alert-success">Loaded ${orders.length} orders</div>`;
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                document.getElementById('testResult').innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
+            }
+        }
+
+        // Display orders
+        function displayOrders() {
+            const container = document.getElementById('ordersDisplay');
+            
+            if (orders.length === 0) {
+                container.innerHTML = '<div class="alert alert-info">No orders found</div>';
+                return;
+            }
+
+            const ordersHTML = orders.map(order => `
+                <div class="card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-0">Đơn hàng #${order.id}</h6>
+                            <small class="text-muted">${Utils.formatDate(order.createdAt)}</small>
+                        </div>
+                        <span class="badge ${getStatusBadgeClass(order.status)}">${getStatusText(order.status)}</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <h6>Sản phẩm:</h6>
+                                ${order.items ? order.items.map(item => `
+                                    <div class="d-flex align-items-center mb-2">
+                                        <img src="${item.imageUrl || '../img/1.jpg'}" alt="" class="me-3" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+                                        <div>
+                                            <div class="fw-bold">${item.name}</div>
+                                            <small class="text-muted">Số lượng: ${item.quantity}</small>
+                                        </div>
+                                    </div>
+                                `).join('') : '<p class="text-muted">Không có sản phẩm</p>'}
+                            </div>
+                            <div class="col-md-4">
+                                <div class="text-end">
+                                    <h6>Tổng tiền: ${Utils.formatPrice(order.totalPrice)}</h6>
+                                    <p class="text-muted mb-2">Phương thức: ${getPaymentMethodText(order.paymentMethod)}</p>
+                                    <p class="text-muted mb-2">Địa chỉ: ${order.shippingAddress || 'Chưa cập nhật'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <button class="btn btn-outline-primary btn-sm" onclick="viewOrderDetails('${order.id}')">
+                                <i class="bi bi-eye"></i> Xem chi tiết
+                            </button>
+                            ${order.status === 'pending' ? `
+                                <button class="btn btn-outline-danger btn-sm ms-2" onclick="cancelOrder('${order.id}')">
+                                    <i class="bi bi-x-circle"></i> Hủy đơn
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = ordersHTML;
+        }
+
+        // Event listeners
+        document.getElementById('testLoadOrders').addEventListener('click', loadOrders);
+        
+        document.getElementById('testOrderDetails').addEventListener('click', function() {
+            if (orders.length > 0) {
+                viewOrderDetails(orders[0].id);
+            } else {
+                alert('No orders loaded. Please load orders first.');
+            }
+        });
+        
+        document.getElementById('testCancelOrder').addEventListener('click', function() {
+            if (orders.length > 0) {
+                const pendingOrder = orders.find(o => o.status === 'pending');
+                if (pendingOrder) {
+                    cancelOrder(pendingOrder.id);
+                } else {
+                    alert('No pending orders to cancel.');
+                }
+            } else {
+                alert('No orders loaded. Please load orders first.');
+            }
+        });
+    </script>
+</body>
+</html>

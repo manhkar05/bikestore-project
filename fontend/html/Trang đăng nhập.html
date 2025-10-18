@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng Nhập - Lâm và Mạnh - Xe Đạp Điện</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="Trang Chủ.html"><img src="../img/Logo_xe_đạp_điện_có_tên_Lâm_và_Mạnh-removebg-preview.png" alt="" width="100px" height="50px"></a>
+                <div style="display: flex;">
+                    <input type="search" class="form-control" placeholder="Tìm kiếm xe...">
+                    <button class="ms-3 btn btn-primary">Search</button>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="Trang Chủ.html">Trang Chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Trang ds sp.html">Cửa Hàng</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Danh Mục</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Xe Đô Thị</a></li>
+                                <li><a class="dropdown-item" href="#">Xe Phiêu Lưu</a></li>
+                                <li><a class="dropdown-item" href="#">Xe Giá Rẻ</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="Trang tin tuc.html">Tin Tức</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Trang gioi thieu.html">Giới Thiệu</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Trang giỏ hàng.html"><i class="bi bi-cart"></i>
+                                <span id="cart-count">0</span></a></li>
+                        <li class="nav-item dropdown" id="user-dropdown" style="display: none;">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-fill"></i> <span id="user-name">Tên tài khoản</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="Trang thông tin cá nhân.html"><i class="bi bi-person"></i> Thông tin cá nhân</a></li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li><a class="dropdown-item" href="#" id="logout-btn"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item" id="login-link">
+                            <a class="nav-link" href="Trang đăng nhập.html"><i class="bi bi-person-fill"></i> Đăng nhập</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="py-5 mt-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-5">
+                    <div class="card shadow-lg border-0">
+                        <div class="card-body p-5">
+                            <div class="text-center mb-4">
+                                <img src="../img/Logo_xe_đạp_điện_có_tên_Lâm_và_Mạnh-removebg-preview.png" alt="Logo" width="120" class="mb-3">
+                                <h2 class="fw-bold text-primary">Đăng Nhập</h2>
+                                <p class="text-muted">Chào mừng bạn quay trở lại!</p>
+                            </div>
+
+                            <form id="login-form">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">
+                                        <i class="bi bi-person me-2"></i>Tên đăng nhập hoặc Email
+                                    </label>
+                                    <input type="text" class="form-control form-control-lg" id="username" name="username" placeholder="Nhập tên đăng nhập hoặc email" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">
+                                        <i class="bi bi-lock me-2"></i>Mật khẩu
+                                    </label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Nhập mật khẩu" required>
+                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                            <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 form-check d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <input type="checkbox" class="form-check-input" id="rememberMe">
+                                        <label class="form-check-label" for="rememberMe">Ghi nhớ đăng nhập</label>
+                                    </div>
+                                    <a href="#" class="text-decoration-none">Quên mật khẩu?</a>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Đăng nhập
+                                </button>
+                            </form>
+
+                            <div class="text-center">
+                                <p class="text-muted">Chưa có tài khoản?
+                                    <a href="Trang đăng ký.html" class="text-decoration-none fw-bold">Đăng ký ngay</a>
+                                </p>
+                            </div>
+
+                            <!-- Social Login -->
+                            <div class="text-center mt-4">
+                                <div class="position-relative">
+                                    <hr>
+                                    <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted">Hoặc</span>
+                                </div>
+
+                                <div class="row g-2 mt-3">
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-primary w-100">
+                                            <i class="fab fa-facebook-f me-2"></i>Facebook
+                                        </button>
+                                    </div>
+                                    <div class="col-6">
+                                        <button class="btn btn-outline-danger w-100">
+                                            <i class="fab fa-google me-2"></i>Google
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background-color:grey; color:white; padding: 40px 20px;">
+        <div style="max-width: 1200px; margin: auto;">
+            <h2>Lâm và Mạnh – Xe đạp điện</h2>
+            <p>📧 Email: <a href="mailto:xedapdien@gmai.com" style="color:white;">xedapdien@gmai.com</a></p>
+            <p>📞 Điện thoại: <a href="tel:0123456789" style="color:white;">0123456789</a></p>
+            <p>📍 Địa chỉ: IUH</p>
+
+            <div style="margin-top: 20px;">
+                <a href="#" style="margin-right: 15px; color:white;"><img src="../img/face.png" alt="" width="50px" height="50px">Facebook</a>
+                <a href="#" style="margin-right: 15px; color:white;"><img src="../img/ig.png" alt="" width="80px" height="50px">Instagram</a>
+            </div>
+
+            <p style="margin-top: 30px;">© 2025 Lâm và Mạnh. Bảo lưu mọi quyền.</p>
+        </div>
+    </footer>
+
+    <button class="back-to-top" onclick="window.scrollTo(0, 0)">Lên đầu trang</button>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Handle login form
+        document.getElementById("login-form").addEventListener("submit", async function(event) {
+            event.preventDefault();
+            const email = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+
+            await handleLogin(email, password, event);
+        });
+
+        // Toggle password visibility
+        document.getElementById("togglePassword").addEventListener("click", function() {
+            const passwordField = document.getElementById("password");
+            const toggleIcon = document.getElementById("togglePasswordIcon");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("bi-eye");
+                toggleIcon.classList.add("bi-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("bi-eye-slash");
+                toggleIcon.classList.add("bi-eye");
+            }
+        });
+
+        // Update user interface based on login status (server-backed)
+        async function updateUserInterface() {
+            const loggedInUser = ApiService.getCookie('loggedInUser');
+            const currentUserId = ApiService.getCurrentUserId();
+
+            if (loggedInUser && currentUserId) {
+                // Show user dropdown, hide login link
+                document.getElementById("user-dropdown").style.display = "block";
+                document.getElementById("login-link").style.display = "none";
+
+                // Try to fetch display name
+                try {
+                    const user = await ApiService.getUserById(currentUserId);
+                    document.getElementById("user-name").textContent = user.name || user.email || loggedInUser;
+                } catch (e) {
+                    document.getElementById("user-name").textContent = loggedInUser;
+                }
+
+                // Handle logout
+                document.getElementById("logout-btn").addEventListener("click", function(e) {
+                    e.preventDefault();
+                    ApiService.setCookie('loggedInUser', '', -1);
+                    ApiService.setCookie('currentUser', '', -1);
+                    ApiService.setCookie('currentUserId', '', -1);
+                    Utils.showNotification("Đã đăng xuất thành công!", "success");
+                    setTimeout(() => {
+                        window.location.href = "Trang Chủ.html";
+                    }, 1000);
+                });
+            } else {
+                // Show login link, hide user dropdown
+                document.getElementById("user-dropdown").style.display = "none";
+                document.getElementById("login-link").style.display = "block";
+            }
+        }
+
+        // Common login handler (no offline fallback)
+        async function handleLogin(email, password, event) {
+            if (!email || !password) {
+                Utils.showNotification("Vui lòng nhập đầy đủ thông tin", "error");
+                return;
+            }
+
+            const submitBtn = event.target.querySelector('.btn-primary');
+            const originalText = submitBtn.innerHTML;
+            try {
+                // Show loading indicator
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang đăng nhập...';
+                submitBtn.disabled = true;
+
+                const apiResponse = await ApiService.loginUser(email, password);
+
+                // ApiService may return a fetch Response or already-parsed JSON
+                let result;
+                if (apiResponse instanceof Response) {
+                    if (!apiResponse.ok) {
+                        if (apiResponse.status === 401) {
+                                Utils.showNotification("nhập sai mật khẩu", "error");
+                                return;
+                            }
+                        let errJson = null;
+                        try { errJson = await apiResponse.json(); } catch (e) {}
+                        Utils.showNotification(errJson?.message || "Đăng nhập thất bại", "error");
+                        return;
+                    }
+                    result = await apiResponse.json();
+                } else {
+                    result = apiResponse;
+                }
+
+                if (result && result.success) {
+                    Utils.showNotification("Đăng nhập thành công!", "success");
+                    ApiService.setCookie('loggedInUser', result.user.name || result.user.email, 7);
+                    ApiService.setCookie('currentUser', JSON.stringify(result.user), 7);
+                    // One-time flag to show success message on next page if needed
+                    ApiService.setCookie('justLoggedIn', '1', 1);
+                    ApiService.setCurrentUserId(result.user.id);
+
+                    // Redirect to homepage immediately
+                    window.location.href = "Trang Chủ.html";
+                } else {
+                    Utils.showNotification(result?.message || "nhập sai mật khẩu", "error");
+                }
+            } catch (error) {
+                console.error('Lỗi đăng nhập:', error);
+                Utils.showNotification("Nhập sai mật khẩu. Vui lòng nhập lại.", "error");
+            } finally {
+                // Reset button state
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        // Update cart count and login status
+        window.onload = async function() {
+            try {
+                const cartObj = await ApiService.getCartServer();
+                const items = (cartObj && cartObj.items) ? cartObj.items : [];
+                const cartCount = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+                document.getElementById("cart-count").innerText = cartCount;
+            } catch (e) {
+                console.error('Could not load cart count:', e);
+            }
+
+            updateUserInterface();
+        };
+    </script>
+</body>
+
+</html>

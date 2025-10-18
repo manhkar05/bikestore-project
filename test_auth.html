@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Authentication - Bikestore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container py-5">
+        <h1 class="text-center mb-5">🧪 Test Authentication</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-person-plus me-2"></i>Test Đăng Ký</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="test-register-form">
+                            <div class="mb-3">
+                                <label for="reg-name" class="form-label">Tên đăng nhập</label>
+                                <input type="text" class="form-control" id="reg-name" value="testuser" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reg-email" class="form-label">Email</label>
+                                <input type="email" class="form-control" id="reg-email" value="test@example.com" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="reg-password" class="form-label">Mật khẩu</label>
+                                <input type="password" class="form-control" id="reg-password" value="123456" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-person-plus"></i> Test Đăng Ký
+                            </button>
+                        </form>
+                        <div id="register-result" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-box-arrow-in-right me-2"></i>Test Đăng Nhập</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="test-login-form">
+                            <div class="mb-3">
+                                <label for="login-username" class="form-label">Tên đăng nhập hoặc Email</label>
+                                <input type="text" class="form-control" id="login-username" value="testuser" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="login-password" class="form-label">Mật khẩu</label>
+                                <input type="password" class="form-control" id="login-password" value="123456" required>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-box-arrow-in-right"></i> Test Đăng Nhập
+                            </button>
+                        </form>
+                        <div id="login-result" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-list-check me-2"></i>Test Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="test-results" class="bg-light p-3 rounded" style="min-height: 200px; font-family: monospace;">
+                            <p class="text-muted">Kết quả test sẽ hiển thị ở đây...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="fontend/js/api.js"></script>
+    <script>
+        let testResults = [];
+
+        // Test register
+        document.getElementById("test-register-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const name = document.getElementById("reg-name").value.trim();
+            const email = document.getElementById("reg-email").value.trim();
+            const password = document.getElementById("reg-password").value.trim();
+
+            addTestResult(`🔄 Testing register with: ${name}, ${email}`);
+
+            try {
+                const userData = {
+                    name: name,
+                    email: email,
+                    password: password
+                };
+
+                const response = await ApiService.registerUser(userData);
+                addTestResult(`✅ Register successful: ${JSON.stringify(response)}`);
+                document.getElementById("register-result").innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>Đăng ký thành công!</strong><br>
+                        ID: ${response.id}<br>
+                        Name: ${response.name}<br>
+                        Email: ${response.email}
+                    </div>
+                `;
+            } catch (error) {
+                addTestResult(`❌ Register failed: ${error.message}`);
+                document.getElementById("register-result").innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Đăng ký thất bại!</strong><br>
+                        Lỗi: ${error.message}
+                    </div>
+                `;
+            }
+        });
+
+        // Test login
+        document.getElementById("test-login-form").addEventListener("submit", async function(e) {
+            e.preventDefault();
+
+            const username = document.getElementById("login-username").value.trim();
+            const password = document.getElementById("login-password").value.trim();
+
+            addTestResult(`🔄 Testing login with: ${username}`);
+
+            try {
+                const response = await ApiService.loginUser(username, password);
+                addTestResult(`✅ Login successful: ${JSON.stringify(response)}`);
+                document.getElementById("login-result").innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>Đăng nhập thành công!</strong><br>
+                        Success: ${response.success}<br>
+                        User: ${JSON.stringify(response.user)}
+                    </div>
+                `;
+            } catch (error) {
+                addTestResult(`❌ Login failed: ${error.message}`);
+                document.getElementById("login-result").innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Đăng nhập thất bại!</strong><br>
+                        Lỗi: ${error.message}
+                    </div>
+                `;
+            }
+        });
+
+        // Add test result
+        function addTestResult(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const result = `[${timestamp}] ${message}`;
+            testResults.push(result);
+
+            const resultsDiv = document.getElementById("test-results");
+            resultsDiv.innerHTML = testResults.join('<br>');
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+
+        // Initialize
+        window.onload = function() {
+            addTestResult('🔧 Authentication test initialized');
+            addTestResult('📝 Instructions:');
+            addTestResult('1. Click "Test Đăng Ký" to register a new user');
+            addTestResult('2. Click "Test Đăng Nhập" to login with the same credentials');
+            addTestResult('3. Check the results below');
+        };
+    </script>
+</body>
+
+</html>

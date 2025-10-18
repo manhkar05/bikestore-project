@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Cart Functionality - Bikestore</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container py-5">
+        <h1 class="text-center mb-5">🛒 Test Cart Functionality</h1>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-cart-plus me-2"></i>Test Thêm Sản Phẩm Vào Giỏ Hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <button id="test-add-to-cart" class="btn btn-primary w-100">
+                            <i class="bi bi-cart-plus"></i> Test Thêm Sản Phẩm
+                        </button>
+                        <div id="add-to-cart-result" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-cart-check me-2"></i>Test Lấy Giỏ Hàng</h5>
+                    </div>
+                    <div class="card-body">
+                        <button id="test-get-cart" class="btn btn-success w-100">
+                            <i class="bi bi-cart-check"></i> Test Lấy Giỏ Hàng
+                        </button>
+                        <div id="get-cart-result" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5><i class="bi bi-list-check me-2"></i>Test Results</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="test-results" class="bg-light p-3 rounded" style="min-height: 200px; font-family: monospace;">
+                            <p class="text-muted">Kết quả test sẽ hiển thị ở đây...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="fontend/js/api.js"></script>
+    <script>
+        let testResults = [];
+
+        // Test add to cart
+        document.getElementById("test-add-to-cart").addEventListener("click", async function() {
+            addTestResult(`🔄 Testing add to cart...`);
+
+            try {
+                // Create a test product
+                const testProduct = {
+                    id: "test-product-1",
+                    name: "Xe đạp điện test",
+                    price: 10000000,
+                    image: "../img/1.jpg",
+                    quantity: 1
+                };
+
+                // Get current cart
+                const cartObj = await ApiService.getCartServer();
+                let cart = (cartObj && cartObj.items) ? cartObj.items : [];
+                
+                // Add test product
+                cart.push(testProduct);
+
+                // Save cart
+                const result = await ApiService.saveCartServer({ 
+                    userId: ApiService.getCurrentUserId() || ApiService.getGuestId(), 
+                    items: cart 
+                });
+
+                addTestResult(`✅ Add to cart successful: ${JSON.stringify(result)}`);
+                document.getElementById("add-to-cart-result").innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>Thêm vào giỏ hàng thành công!</strong><br>
+                        Cart ID: ${result.id}<br>
+                        User ID: ${result.userId}<br>
+                        Items count: ${result.items ? result.items.length : 0}
+                    </div>
+                `;
+            } catch (error) {
+                addTestResult(`❌ Add to cart failed: ${error.message}`);
+                document.getElementById("add-to-cart-result").innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Thêm vào giỏ hàng thất bại!</strong><br>
+                        Lỗi: ${error.message}
+                    </div>
+                `;
+            }
+        });
+
+        // Test get cart
+        document.getElementById("test-get-cart").addEventListener("click", async function() {
+            addTestResult(`🔄 Testing get cart...`);
+
+            try {
+                const cart = await ApiService.getCartServer();
+                addTestResult(`✅ Get cart successful: ${JSON.stringify(cart)}`);
+                document.getElementById("get-cart-result").innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>Lấy giỏ hàng thành công!</strong><br>
+                        Cart ID: ${cart.id || 'N/A'}<br>
+                        User ID: ${cart.userId}<br>
+                        Items count: ${cart.items ? cart.items.length : 0}<br>
+                        Items: ${cart.items ? JSON.stringify(cart.items, null, 2) : '[]'}
+                    </div>
+                `;
+            } catch (error) {
+                addTestResult(`❌ Get cart failed: ${error.message}`);
+                document.getElementById("get-cart-result").innerHTML = `
+                    <div class="alert alert-danger">
+                        <strong>Lấy giỏ hàng thất bại!</strong><br>
+                        Lỗi: ${error.message}
+                    </div>
+                `;
+            }
+        });
+
+        // Add test result
+        function addTestResult(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            const result = `[${timestamp}] ${message}`;
+            testResults.push(result);
+
+            const resultsDiv = document.getElementById("test-results");
+            resultsDiv.innerHTML = testResults.join('<br>');
+            resultsDiv.scrollTop = resultsDiv.scrollHeight;
+        }
+
+        // Initialize
+        window.onload = function() {
+            addTestResult('🔧 Cart functionality test initialized');
+            addTestResult('📝 Instructions:');
+            addTestResult('1. Click "Test Thêm Sản Phẩm" to add a test product to cart');
+            addTestResult('2. Click "Test Lấy Giỏ Hàng" to retrieve the cart');
+            addTestResult('3. Check the results below');
+            addTestResult(`🔑 Current User ID: ${ApiService.getCurrentUserId() || ApiService.getGuestId()}`);
+        };
+    </script>
+</body>
+
+</html>

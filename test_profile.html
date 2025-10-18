@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Profile Integration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="fontend/css/bootstrap.min.css" rel="stylesheet">
+    <link href="fontend/css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Test Profile Integration with MongoDB</h1>
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Test User APIs</h5>
+                    </div>
+                    <div class="card-body">
+                        <button id="testGetUser" class="btn btn-primary mb-2">Test Get User</button>
+                        <button id="testUpdateUser" class="btn btn-warning mb-2">Test Update User</button>
+                        <button id="testGetOrders" class="btn btn-info mb-2">Test Get Orders</button>
+                        <button id="testGetTransactions" class="btn btn-success mb-2">Test Get Transactions</button>
+                        <div id="userResult" class="mt-3"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Test Data</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="userId" class="form-label">User ID:</label>
+                            <input type="text" id="userId" class="form-control" placeholder="Enter user ID">
+                        </div>
+                        <div class="mb-3">
+                            <label for="testName" class="form-label">Test Name:</label>
+                            <input type="text" id="testName" class="form-control" placeholder="Enter test name">
+                        </div>
+                        <div class="mb-3">
+                            <label for="testPhone" class="form-label">Test Phone:</label>
+                            <input type="text" id="testPhone" class="form-control" placeholder="Enter test phone">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="fontend/js/api.js"></script>
+    <script>
+        // Test Get User
+        document.getElementById('testGetUser').addEventListener('click', async function() {
+            const userId = document.getElementById('userId').value;
+            const resultDiv = document.getElementById('userResult');
+            
+            if (!userId) {
+                resultDiv.innerHTML = '<div class="alert alert-warning">Please enter a User ID</div>';
+                return;
+            }
+            
+            try {
+                resultDiv.innerHTML = '<div class="spinner-border" role="status"></div> Loading...';
+                const user = await ApiService.getUserById(userId);
+                
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6>User Found:</h6>
+                        <p><strong>ID:</strong> ${user.id}</p>
+                        <p><strong>Name:</strong> ${user.name}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Phone:</strong> ${user.phone || 'N/A'}</p>
+                        <p><strong>Address:</strong> ${user.address || 'N/A'}</p>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>Error:</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        });
+
+        // Test Update User
+        document.getElementById('testUpdateUser').addEventListener('click', async function() {
+            const userId = document.getElementById('userId').value;
+            const testName = document.getElementById('testName').value;
+            const testPhone = document.getElementById('testPhone').value;
+            const resultDiv = document.getElementById('userResult');
+            
+            if (!userId || !testName) {
+                resultDiv.innerHTML = '<div class="alert alert-warning">Please enter User ID and Test Name</div>';
+                return;
+            }
+            
+            try {
+                resultDiv.innerHTML = '<div class="spinner-border" role="status"></div> Updating...';
+                
+                const updateData = {
+                    name: testName,
+                    phone: testPhone,
+                    email: 'test@example.com', // Keep existing email
+                    password: '' // Don't change password
+                };
+                
+                const updatedUser = await ApiService.updateUser(userId, updateData);
+                
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6>User Updated Successfully:</h6>
+                        <p><strong>ID:</strong> ${updatedUser.id}</p>
+                        <p><strong>Name:</strong> ${updatedUser.name}</p>
+                        <p><strong>Email:</strong> ${updatedUser.email}</p>
+                        <p><strong>Phone:</strong> ${updatedUser.phone || 'N/A'}</p>
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>Error:</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        });
+
+        // Test Get Orders
+        document.getElementById('testGetOrders').addEventListener('click', async function() {
+            const userId = document.getElementById('userId').value;
+            const resultDiv = document.getElementById('userResult');
+            
+            if (!userId) {
+                resultDiv.innerHTML = '<div class="alert alert-warning">Please enter a User ID</div>';
+                return;
+            }
+            
+            try {
+                resultDiv.innerHTML = '<div class="spinner-border" role="status"></div> Loading orders...';
+                const orders = await ApiService.getUserOrders(userId);
+                
+                if (orders.length === 0) {
+                    resultDiv.innerHTML = '<div class="alert alert-info">No orders found for this user</div>';
+                    return;
+                }
+                
+                const ordersHTML = orders.map(order => `
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <h6>Order #${order.id}</h6>
+                            <p><strong>Total:</strong> ${order.totalPrice}</p>
+                            <p><strong>Status:</strong> ${order.status}</p>
+                            <p><strong>Created:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6>Found ${orders.length} orders:</h6>
+                        ${ordersHTML}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>Error:</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        });
+
+        // Test Get Transactions
+        document.getElementById('testGetTransactions').addEventListener('click', async function() {
+            const userId = document.getElementById('userId').value;
+            const resultDiv = document.getElementById('userResult');
+            
+            if (!userId) {
+                resultDiv.innerHTML = '<div class="alert alert-warning">Please enter a User ID</div>';
+                return;
+            }
+            
+            try {
+                resultDiv.innerHTML = '<div class="spinner-border" role="status"></div> Loading transactions...';
+                const transactions = await ApiService.getUserTransactions(userId);
+                
+                if (transactions.length === 0) {
+                    resultDiv.innerHTML = '<div class="alert alert-info">No transactions found for this user</div>';
+                    return;
+                }
+                
+                const transactionsHTML = transactions.map(transaction => `
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <h6>Transaction #${transaction.id}</h6>
+                            <p><strong>Amount:</strong> ${transaction.totalAmount}</p>
+                            <p><strong>Status:</strong> ${transaction.status}</p>
+                            <p><strong>Created:</strong> ${new Date(transaction.createdAt).toLocaleString()}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <h6>Found ${transactions.length} transactions:</h6>
+                        ${transactionsHTML}
+                    </div>
+                `;
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h6>Error:</h6>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>

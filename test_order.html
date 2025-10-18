@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Order Creation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="fontend/css/bootstrap.min.css" rel="stylesheet">
+    <link href="fontend/css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Test Order Creation</h1>
+        <div class="card">
+            <div class="card-body">
+                <button id="testOrder" class="btn btn-primary">Test Create Order</button>
+                <div id="result" class="mt-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="fontend/js/api.js"></script>
+    <script>
+        document.getElementById('testOrder').addEventListener('click', async function() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '<div class="spinner-border" role="status"></div> Testing...';
+            
+            try {
+                // Test data
+                const testOrderData = {
+                    userId: "GUEST_" + Date.now(),
+                    items: [
+                        {
+                            productId: "test-product-1",
+                            quantity: 2
+                        }
+                    ],
+                    paymentMethod: "cod",
+                    shippingAddress: "123 Test Street, Test City"
+                };
+                
+                console.log('Sending order data:', testOrderData);
+                
+                const order = await ApiService.createOrder(testOrderData);
+                
+                resultDiv.innerHTML = `
+                    <div class="alert alert-success">
+                        <h5>Order Created Successfully!</h5>
+                        <p><strong>Order ID:</strong> ${order.id}</p>
+                        <p><strong>User ID:</strong> ${order.userId}</p>
+                        <p><strong>Total Price:</strong> ${order.totalPrice}</p>
+                        <p><strong>Status:</strong> ${order.status}</p>
+                        <p><strong>Created At:</strong> ${new Date(order.createdAt).toLocaleString()}</p>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Error creating order:', error);
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <h5>Error Creating Order</h5>
+                        <p>${error.message}</p>
+                        <p>Status: ${error.status}</p>
+                    </div>
+                `;
+            }
+        });
+    </script>
+</body>
+</html>
