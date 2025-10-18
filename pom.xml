@@ -89,6 +89,7 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <mainClass>com.example.bikestore.bikestore.BikestoreApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
