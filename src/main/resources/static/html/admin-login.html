@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập Admin - Lâm và Mạnh Xe Đạp Điện</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .admin-login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+        }
+
+        .admin-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-admin {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .demo-accounts {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .demo-account {
+            background: white;
+            border-radius: 8px;
+            padding: 10px 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e9ecef;
+        }
+
+        .demo-account:hover {
+            border-color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .demo-account:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-login-container">
+        <div class="text-center mb-4">
+            <img src="../img/Logo_xe_đạp_điện_có_tên_Lâm_và_Mạnh-removebg-preview.png" alt="Logo" width="120"
+                class="mb-3">
+            <div class="admin-badge">Admin Access</div>
+            <h2 class="fw-bold text-dark mb-2">Đăng nhập Admin</h2>
+            <p class="text-muted">Truy cập vào hệ thống quản lý</p>
+        </div>
+
+        <form id="admin-login-form">
+            <div class="mb-3">
+                <label for="adminEmail" class="form-label">
+                    <i class="bi bi-envelope me-2"></i>Email Admin
+                </label>
+                <input type="email" class="form-control" id="adminEmail" name="email" placeholder="admin@bikestore.com"
+                    required>
+            </div>
+
+            <div class="mb-3">
+                <label for="adminPassword" class="form-label">
+                    <i class="bi bi-lock me-2"></i>Mật khẩu
+                </label>
+                <div class="input-group">
+                    <input type="password" class="form-control" id="adminPassword" name="password"
+                        placeholder="Nhập mật khẩu" required>
+                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                        <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-admin w-100 mb-3">
+                <i class="bi bi-shield-check me-2"></i>Đăng nhập Admin
+            </button>
+        </form>
+
+        <div class="demo-accounts">
+            <h6 class="mb-3"><i class="bi bi-info-circle me-2"></i>Tài khoản demo:</h6>
+            <div class="demo-account" onclick="fillCredentials('admin@bikestore.com', 'admin123')">
+                <strong>Admin Lâm</strong><br>
+                <small class="text-muted">admin@bikestore.com</small>
+            </div>
+            <div class="demo-account" onclick="fillCredentials('admin2@bikestore.com', 'admin456')">
+                <strong>Admin Mạnh</strong><br>
+                <small class="text-muted">admin2@bikestore.com</small>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="Trang Chủ.html" class="text-decoration-none">
+                <i class="bi bi-arrow-left me-2"></i>Về trang chủ
+            </a>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Toggle password visibility
+        document.getElementById("togglePassword").addEventListener("click", function () {
+            const passwordField = document.getElementById("adminPassword");
+            const toggleIcon = document.getElementById("togglePasswordIcon");
+
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                toggleIcon.classList.remove("bi-eye");
+                toggleIcon.classList.add("bi-eye-slash");
+            } else {
+                passwordField.type = "password";
+                toggleIcon.classList.remove("bi-eye-slash");
+                toggleIcon.classList.add("bi-eye");
+            }
+        });
+
+        // Fill demo credentials
+        function fillCredentials(email, password) {
+            document.getElementById('adminEmail').value = email;
+            document.getElementById('adminPassword').value = password;
+        }
+
+        // Handle admin login form
+        document.getElementById("admin-login-form").addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const email = document.getElementById("adminEmail").value.trim();
+            const password = document.getElementById("adminPassword").value.trim();
+
+            if (!email || !password) {
+                Utils.showNotification("Vui lòng nhập đầy đủ thông tin", "error");
+                return;
+            }
+
+            try {
+                // Show loading indicator
+                const submitBtn = event.target.querySelector('.btn-admin');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang đăng nhập...';
+                submitBtn.disabled = true;
+
+                // Check if it's an admin email
+                const adminEmails = ['admin@bikestore.com', 'admin2@bikestore.com'];
+                if (!adminEmails.includes(email)) {
+                    Utils.showNotification("Chỉ admin mới được phép truy cập!", "error");
+                    return;
+                }
+
+                // Call backend login endpoint
+                try {
+                    const resp = await ApiService.loginUser(email, password);
+                    if (resp && resp.success && resp.user) {
+                        const user = resp.user;
+                        if (user.role !== 'admin') {
+                            Utils.showNotification('Tài khoản không có quyền admin', 'error');
+                            return;
+                        }
+                        // Store admin info in cookie for dashboard
+                        AdminAuth.setCurrentAdmin(user);
+                        Utils.showNotification('Đăng nhập admin thành công!', 'success');
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 700);
+                    } else {
+                        Utils.showNotification(resp.message || 'Không thể đăng nhập', 'error');
+                    }
+                } catch (err) {
+                    if (err && err.status === 401) {
+                        Utils.showNotification('nhập sai mật khẩu', 'error');
+                    } else {
+                        console.error('Lỗi khi đăng nhập admin:', err);
+                        Utils.showNotification('Lỗi khi đăng nhập admin', 'error');
+                    }
+                }
+
+            } catch (error) {
+                console.error('Lỗi đăng nhập admin:', error);
+                Utils.showNotification("Lỗi khi đăng nhập admin", "error");
+            } finally {
+                // Reset button state
+                const submitBtn = event.target.querySelector('.btn-admin');
+                submitBtn.innerHTML = '<i class="bi bi-shield-check me-2"></i>Đăng nhập Admin';
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+
+</html>

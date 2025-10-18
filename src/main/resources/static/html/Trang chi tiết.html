@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi Tiết Sản Phẩm</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="../css/bootstrap.min.css" rel="stylesheet">
+    <link href="../css/styles.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="Trang Chủ.html"><img src="../img/Logo_xe_đạp_điện_có_tên_Lâm_và_Mạnh-removebg-preview.png" alt="" width="100px" height="50px"></a>
+                <div style="display: flex;">
+                    <input type="search" class="form-control" placeholder="Tìm kiếm xe...">
+                    <button class="ms-3 btn btn-primary">Search</button>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item"><a class="nav-link" href="Trang Chủ.html">Trang Chủ</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Trang ds sp.html">Cửa Hàng</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">Danh
+                                Mục</a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Xe Đô Thị</a></li>
+                                <li><a class="dropdown-item" href="#">Xe Phiêu Lưu</a></li>
+                                <li><a class="dropdown-item" href="#">Xe Giá Rẻ</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item"><a class="nav-link" href="Trang chính sách.html">Chính Sách</a></li>
+                        <li class="nav-item"><a class="nav-link" href="Trang giỏ hàng.html"><i class="bi bi-cart"></i>
+                                <span id="cart-count">0</span></a></li>
+                        <li class="nav-item dropdown" id="user-dropdown" style="display: none;">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-fill"></i> <span id="user-name">Tên tài khoản</span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="Trang thông tin cá nhân.html"><i
+                                            class="bi bi-person"></i> Thông tin cá nhân</a></li>
+                                <li>
+                                    <li><a class="dropdown-item" href="Trang liên hệ.html"><i
+                                            class="bi bi-person"></i>Liên hệ / Hỗ trợ</a></li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <li><a class="dropdown-item" href="#" id="logout-btn"><i
+                                            class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+                            </ul>
+                            </li>
+                            <li class="nav-item" id="login-link">
+                                <a class="nav-link" href="Trang đăng nhập.html"><i class="bi bi-person-fill"></i> Đăng
+                                nhập</a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="py-5 mt-5">
+        <div class="container" id="product-detail-content">
+            <!-- Product details will be rendered here by JavaScript -->
+        </div>
+    </main>
+
+    <footer style="background-color:grey; color:white; padding: 40px 20px;">
+        <div style="max-width: 1200px; margin: auto;">
+            <h2>Lâm và Mạnh – Xe đạp điện</h2>
+            <p>📧 Email: <a href="mailto:xedapdien@gmai.com" style="color:white;">xedapdien@gmai.com</a></p>
+            <p>📞 Điện thoại: <a href="tel:0123456789" style="color:white;">0123456789</a></p>
+            <p>📍 Địa chỉ: IUH</p>
+
+            <div style="margin-top: 20px;">
+                <a href="#" style="margin-right: 15px; color:white;"><img src="../img/face.png" alt="" width="50px" height="50px">Facebook</a>
+                <a href="#" style="margin-right: 15px; color:white;"><img src="../img/ig.png" alt="" width="80px" height="50px">Instagram</a>
+            </div>
+
+            <p style="margin-top: 30px;">© 2025 Lâm và Mạnh. Bảo lưu mọi quyền.</p>
+        </div>
+    </footer>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentProduct = null;
+
+        // Hiển thị chi tiết sản phẩm
+        function renderProductDetails(product) {
+            const productDetailContent = document.getElementById('product-detail-content');
+            productDetailContent.innerHTML = `
+                <div class="row">
+                    <div class="col-md-6">
+                        <img src="${product.imageUrl || '../img/1.jpg'}" alt="${product.name}" class="img-fluid rounded shadow-sm">
+                    </div>
+                    <div class="col-md-6">
+                        <h1 class="mb-3">${product.name}</h1>
+                        <p class="text-muted">Thương hiệu: ${product.brand || 'N/A'} | Phân loại: ${product.category || 'N/A'}</p>
+                        <h2 class="text-danger fw-bold my-3">${Utils.formatPrice(product.price || 0)}</h2>
+                        <p>${product.description || 'Mô tả sản phẩm chưa được cập nhật.'}</p>
+                        
+                        <div class="d-flex align-items-center gap-3 my-4">
+                            <label for="quantity" class="form-label">Số lượng:</label>
+                            <input type="number" id="quantity" value="1" min="1" class="form-control" style="width: 80px;">
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-primary flex-fill" onclick="addToCart()">
+                                <i class="bi bi-cart-plus"></i> Thêm vào giỏ hàng
+                            </button>
+                            <button class="btn btn-success flex-fill" onclick="buyNow()">
+                                <i class="bi bi-bag-check"></i> Mua ngay
+                            </button>
+                        </div>
+                         <div class="mt-3">
+                            <p><strong>Tồn kho:</strong> ${product.stock || 0} sản phẩm</p>
+                            <p><strong>Trạng thái:</strong> ${(product.stock > 0) ? 'Còn hàng' : 'Hết hàng'}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Hiển thị lỗi
+        function renderError(message) {
+            const productDetailContent = document.getElementById('product-detail-content');
+            productDetailContent.innerHTML = `
+                <div class="text-center py-5">
+                    <h2 class="text-danger">Lỗi</h2>
+                    <p class="text-muted">${message}</p>
+                    <a href="Trang ds sp.html" class="btn btn-primary">Quay lại cửa hàng</a>
+                </div>
+            `;
+        }
+
+        // Tải chi tiết sản phẩm
+        async function loadProduct() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            if (!productId) {
+                renderError('Không tìm thấy sản phẩm.');
+                return;
+            }
+
+            const productDetailContent = document.getElementById('product-detail-content');
+            Utils.showLoading(productDetailContent);
+
+            try {
+                const product = await ApiService.getProductById(productId);
+                currentProduct = product;
+                renderProductDetails(product);
+            } catch (error) {
+                console.error('Failed to load product:', error);
+                renderError('Không thể tải thông tin sản phẩm. Vui lòng thử lại.');
+            }
+        }
+
+        // Thêm vào giỏ hàng
+        async function addToCart() {
+            if (!currentProduct) return;
+
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
+
+            try {
+                const cartObj = await ApiService.getCartServer();
+                let cart = (cartObj && cartObj.items) ? cartObj.items : [];
+                const existingItem = cart.find(item => item.id === currentProduct.id);
+
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    cart.push({
+                        id: currentProduct.id,
+                        name: currentProduct.name,
+                        price: currentProduct.price,
+                        image: currentProduct.imageUrl,
+                        quantity: quantity
+                    });
+                }
+
+                await ApiService.saveCartServer({
+                    userId: ApiService.getCurrentUserId() || ApiService.getGuestId(),
+                    items: cart
+                });
+                await updateCartCount();
+                Utils.showNotification(`Đã thêm ${quantity} sản phẩm vào giỏ!`, 'success');
+            } catch (error) {
+                console.error('Lỗi khi thêm vào giỏ:', error);
+                Utils.showNotification('Không thể thêm vào giỏ hàng.', 'error');
+            }
+        }
+
+        // Mua ngay
+        async function buyNow() {
+            await addToCart();
+            window.location.href = 'Trang giỏ hàng.html';
+        }
+
+        // Cập nhật số lượng giỏ hàng
+        async function updateCartCount() {
+            try {
+                const cartObj = await ApiService.getCartServer();
+                const items = (cartObj && cartObj.items) ? cartObj.items : [];
+                const cartCount = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+                document.getElementById('cart-count').innerText = cartCount;
+            } catch (e) {
+                console.error('Could not update cart count:', e);
+            }
+        }
+
+        // Chạy khi trang tải xong
+        window.onload = async function() {
+            await updateCartCount();
+            await loadProduct();
+
+            const loggedInUser = ApiService.getCookie('loggedInUser');
+            if (loggedInUser) {
+                const personLink = document.querySelector(".nav-link[href='Trang đăng nhập.html']");
+                if (personLink) {
+                    personLink.innerHTML = `Xin chào, ${loggedInUser}`;
+                    personLink.href = "#";
+                    personLink.addEventListener("click", function() {
+                        ApiService.setCookie('loggedInUser', '', -1);
+                        ApiService.setCookie('currentUserId', '', -1);
+                        window.location.href = "Trang đăng nhập.html";
+                    });
+                }
+            }
+        };
+    </script>
+</body>
+
+</html>
